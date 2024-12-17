@@ -1,23 +1,32 @@
 # Speak With Libras
 
 ## A proposta 
-Esta documento tem como objetivo apresentar a proposta para o projeto final da disciplina de computação visual. A ideia principal é a criação de que permite traduzir gestos de livras (neste caso o abecedario) e convert-lo para audio, sendo o projeto nomeado de "Speak With Libras". 
+Este documento pretende apresentar a proposta para o projeto final da disciplina de Computação Visual. A ideia principal é a criação de uma aplicação que permite traduzir gestos de Libras (neste caso o abecedário) e convertê-los para áudio, sendo o projeto nomeado de "Speak With Libras".
 
 ## Motivação 
-A motivação pela qual levou a criação desta proposta, foi o facto de pensar em poder ajudar alguem com a tecnologia, então achei plausivel tentar desenvolver uma aplicação que convertesse os gestos de libras para audio, e pensei "porque não tentar ?".   
+A motivação por trás deste projeto foi a vontade de querer criar algo que pudesse de alguma forma ajudar as pessoas utilizando tecnologia. Assim, surgiu a ideia de desenvolver uma solução que convertesse gestos de Libras em áudio. 
 
 ## Funcionalidades principais 
-O projeto devera fazer uso do algoritmo MediaPipe (caso se faça diretamente pela posição dos dedos) | OpenPose (caso se faça pelo reconhecimento de imagem com imagens pre treinadas) e devera conter as seguintes funcionalidades principais: 
+O projeto fará uso do algoritmo MediaPipe (caso se opte por detecção direta da posição dos dedos) ou OpenPose (caso se utilize reconhecimento de imagem com modelos pré-treinados). As funcionalidades principais e suas especificações são:
+| Contexto                 | Evento                           | Resposta                               | Algoritmo       | Prioridade |
+| ------------------------ | -------------------------------- | -------------------------------------- | --------------- | ---------- |
+| Reconhecimento de gestos | Detecção do abecedário em Libras | Transcrever o gesto para texto         | MediaPipe Hands | P1         |
+| Reconhecimento de gestos | Gesto de "espaço"                | Inserir um espaço entre palavras       | MediaPipe Hands | P1         |
+| Reconhecimento de gestos | Gesto de "podes ler!"            | Ativar o TTS para ler a frase completa | MediaPipe Hands | P1         |
+| 
 
-| Funcionalidade                         | Prioridade |
-| -------------------------------------- | ---------- |
-| Reconhecer o abecedario em libras      | P1         |
-| Reconhecer o gesto de "espaço"         | P1         |
-| Reconhecer gesto de "podes ler!"       | P1         |
-| Usar um TTS para "Ler" a frase escrita | P1         |
-
-Funcionalidades extras poderão ser acrescentadas no decorrer do desenvolvimento do projeto, contudo deveram ser desenvolvidas somente e exclusivamente apos todas as outras funcionalidades terem sido desenvolvidas corretamente. 
+Funcionalidades extras poderão ser desenvolvidas no decorrer do projeto, mas somente após todas as funcionalidades prioritárias (P1) estarem implementadas e funcionando corretamente.
 
 ## Público alvo 
-O "Speak With Libras" tem como objetivo principal ser usado para utilidade publica e tem o seguinte publico alvo: 
-- Pessoas com deficiencia verbal ou auditiva (Surdo ou Mudos).
+O "Speak With Libras" tem como objetivo principal ser uma ferramenta de utilidade pública destinada ao seguinte público-alvo:
+- Pessoas com deficiência verbal ou auditiva (Surdos ou Mudos).
+
+## Cronograma de Desenvolvimento
+| Dias | Tarefa                                              | Milestone |
+| ---- | --------------------------------------------------- | --------- |
+| 3    | Planejamento do projeto, escolha de algoritmos      |           |
+| 7    | Implementação da detecção do abecedário             | P1        |
+| 2    | Implementação dos gestos "espaço" e "podes ler!"    | P1        |
+| 2    | Desenvolvimento da integração com TTS               | P1        |
+| 5    | Testes e ajustes das funcionalidades principais     | P1        |
+| ?    | Adição de funcionalidades extras e melhorias gerais |           |
