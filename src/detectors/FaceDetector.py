@@ -59,39 +59,6 @@ class FaceDetector:
             print(f"{detection.categories[0].category_name}: {detection.categories[0].score}")
         return detections.detections
 
-
-    def run(self):
-        # Create a video capture object to read frames from the camera.
-        cap = cv2.VideoCapture(0)
-
-        # Process each frame.
-        while cap.isOpened():
-            success, image = cap.read()
-            if not success:
-                print("Ignoring empty camera frame.")
-                continue
-
-            # Convert the image to RGB.
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-            # Process the frame.
-            image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image)
-
-            # Detect objects in the frame.
-            detection_result = self.detector.detect(image)
-
-            # Visualize the detection result.
-            image_copy = np.copy(image.numpy_view())
-            annotated_image = self.visualize(image_copy, detection_result)
-
-            # Display the annotated frame.
-            cv2.imshow('MediaPipe Object Detection', annotated_image)
-            if cv2.waitKey(5) & 0xFF == 27:
-                break
-
-        # Release resources.
-        cap.release()
-
 if __name__ == "__main__":
     detector = FaceDetector()
     
