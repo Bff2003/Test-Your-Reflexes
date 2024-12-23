@@ -9,6 +9,40 @@ from mediapipe.python.solutions import drawing_styles
 import cv2
 
 class PoseDetector:
+    NOSE_INDEX = 0
+    LEFT_EYE_INNER_INDEX = 1
+    LEFT_EYE_INDEX = 2
+    LEFT_EYE_OUTER_INDEX = 3
+    RIGHT_EYE_INNER_INDEX = 4
+    RIGHT_EYE_INDEX = 5
+    RIGHT_EYE_OUTER_INDEX = 6
+    LEFT_EAR_INDEX = 7
+    RIGHT_EAR_INDEX = 8
+    MOUTH_LEFT_INDEX = 9
+    MOUTH_RIGHT_INDEX = 10
+    LEFT_SHOULDER_INDEX = 11
+    RIGHT_SHOULDER_INDEX = 12
+    LEFT_ELBOW_INDEX = 13
+    RIGHT_ELBOW_INDEX = 14
+    LEFT_WRIST_INDEX = 15
+    RIGHT_WRIST_INDEX = 16
+    LEFT_PINKY_INDEX = 17
+    RIGHT_PINKY_INDEX = 18
+    LEFT_INDEX = 19
+    RIGHT_INDEX = 20
+    LEFT_THUMB_INDEX = 21
+    RIGHT_THUMB_INDEX = 22
+    LEFT_HIP_INDEX = 23
+    RIGHT_HIP_INDEX = 24
+    LEFT_KNEE_INDEX = 25
+    RIGHT_KNEE_INDEX = 26
+    LEFT_ANKLE_INDEX = 27
+    RIGHT_ANKLE_INDEX = 28
+    LEFT_HEEL_INDEX = 29
+    RIGHT_HEEL_INDEX = 30
+    LEFT_FOOT_INDEX = 31
+    RIGHT_FOOT_INDEX = 32
+
     def __init__(self):
         # Initialize the object detector
         base_options = python.BaseOptions(model_asset_path='models/poses/pose_landmarker_heavy.task')
