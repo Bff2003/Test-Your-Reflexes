@@ -12,7 +12,7 @@ class TestReflexesGame:
     MOVEMENTS_LIST = [
         Challenge("Soco", HandsChallenges().is_closed_hand_gesture_in_frame, Challenge.HANDS),
         Challenge("L", HandsChallenges().is_l_gesture_in_frame, Challenge.HANDS),
-        Challenge("Phone in screen", ObjectsChallenges().is_phone_in_frame, Challenge.OBJECTS),
+        Challenge("Phone in screen", ObjectsChallenges().is_phone_in_frame, Challenge.OBJECT),
     ]
 
     def __init__(self, name):
@@ -20,6 +20,7 @@ class TestReflexesGame:
         self.cap = cv2.VideoCapture(0)  # Inicializa a captura de vídeo
         self.running = True
         self.last_frame = None
+        self.leaders_board = LeadersBoard()
 
     def capture_video(self):
         while self.running:
@@ -75,6 +76,7 @@ class TestReflexesGame:
                 print(f"Mini game {i + 1} finished!")
             
             print("Game finished!")
+            self.leaders_board.add_leader(self.name, sum([end_time - start_time for start_time, end_time in movements_times]))
             print("Time for each movement:")
             for i in range(len(movements_times)):
                 print(f"Movement {i + 1}: {movements_times[i][1] - movements_times[i][0]} seconds")

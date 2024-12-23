@@ -1,4 +1,6 @@
 from time import time
+import json
+import os
 
 class LeadersBoard:
 
@@ -6,6 +8,23 @@ class LeadersBoard:
 
     def __init__(self):
         self.__leaders = []
+        self.__load_leaders()
+
+    def reset_leaders(self):
+        self.__leaders = []
+        self.__save_leaders()
+        return self.get_leaders()
+
+    def __load_leaders(self):
+        if not os.path.exists('assets'):
+            os.makedirs('assets')
+        if not os.path.exists('assets/leaders.json'):
+            with open('assets/leaders.json', 'w') as file:
+                json.dump([], file)
+    
+    def __save_leaders(self):
+        with open('assets/leaders.json', 'w') as file:
+            json.dump(self.__leaders, file, indent=4)
     
     def __duplicate_leader(self, name: str):
         for leader in self.__leaders:
@@ -23,6 +42,8 @@ class LeadersBoard:
 
         if len(self.__leaders) > self.MAX_LEADERS:
             self.__leaders.pop()
+        
+        self.__save_leaders()
         return self.get_leaders()
 
     def __order_leaders(self):
