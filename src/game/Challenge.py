@@ -1,5 +1,10 @@
 class Challenge:
-    def __init__(self, name: str, challenge: callable, challenge_type: str, image: str):
+    OBJECT = 0
+    POSE = 1
+    HANDS = 2
+    FACE = 3
+
+    def __init__(self, name: str, challenge: callable, challenge_type: str, image: str = None):
         self.name = name
         self.challenge = challenge
         self.challenge_type = challenge_type # type of challenge [POSE, OBJECT, HANDS, FACE]

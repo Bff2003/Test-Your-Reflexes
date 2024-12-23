@@ -5,10 +5,15 @@ from threading import Thread
 from src.game.LeadersBoard import LeadersBoard
 from src.game.Challenge import Challenge
 from src.challenges.HandsChallenges import HandsChallenges
+from src.challenges.ObjectsChallenges import ObjectsChallenges
 
 class TestReflexesGame:
     LEADERS_LIST = []
-    MOVEMENTS_LIST = [Challenge("Soco", HandsChallenges().is_closed_hand_gesture_in_frame, "GESTO", "soco.png")]
+    MOVEMENTS_LIST = [
+        Challenge("Soco", HandsChallenges().is_closed_hand_gesture_in_frame, Challenge.HANDS),
+        Challenge("L", HandsChallenges().is_l_gesture_in_frame, Challenge.HANDS),
+        Challenge("Phone in screen", ObjectsChallenges().is_phone_in_frame, Challenge.OBJECTS),
+    ]
 
     def __init__(self, name):
         self.name = name if name else input("Enter your name: ")
@@ -32,51 +37,57 @@ class TestReflexesGame:
             # Espera por uma tecla para fechar a janela
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 self.running = False
+    
+    def traffic_light(self):
+        for i in range(3, 0, -1):
+            print(f"{i}...")
+            time.sleep(random.uniform(0.5, 1.5))
+        print("Go!")
 
     def start_game(self):
-        # Inicia a thread para capturar vídeo
-        video_thread = Thread(target=self.capture_video)
-        video_thread.start()
+        try:
+            # Inicia a thread para capturar vídeo
+            video_thread = Thread(target=self.capture_video)
+            video_thread.start()
 
-        movements_times = []
-        for i in range(5):  # Exemplo de 5 movimentos
-            movement_choosed = random.randint(0, len(self.MOVEMENTS_LIST) - 1)
-            print(f"Movement chosen: {self.MOVEMENTS_LIST[movement_choosed].name}")
+            movements_times = []
+            for i in range(5):  # Exemplo de 5 movimentos
+                movement_choosed = random.randint(0, len(self.MOVEMENTS_LIST) - 1)
 
-            # input("Press enter to simulate the movement")
+                # input("Press enter to simulate the movement")
+                self.traffic_light()
+                print(f"Movement chosen: {self.MOVEMENTS_LIST[movement_choosed].name}")
+                start_time = time.time()
+                while True:
+                    # Passa o frame atual para is_valid()
+                    if self.last_frame is None:
+                        continue
+                    if not self.MOVEMENTS_LIST[movement_choosed].is_valid(self.last_frame):  # Se o movimento não for válido
+                        # print("Movement not valid!")
+                        continue
+                    
+                    print("Movement valid!")
+                    break
 
-            start_time = time.time()
-            while True:
-                # Passa o frame atual para is_valid()
-                if self.last_frame is None:
-                    continue
-                if not self.MOVEMENTS_LIST[movement_choosed].is_valid(self.last_frame):  # Se o movimento não for válido
-                    # print("Movement not valid!")
-                    continue
-                
-                print("Movement valid!")
-                break
+                end_time = time.time()
+                movements_times.append([start_time, end_time])
 
-            end_time = time.time()
-            movements_times.append([start_time, end_time])
+                print(f"Mini game {i + 1} finished!")
+            
+            print("Game finished!")
+            print("Time for each movement:")
+            for i in range(len(movements_times)):
+                print(f"Movement {i + 1}: {movements_times[i][1] - movements_times[i][0]} seconds")
+            print(f"Total time: {sum([end_time - start_time for start_time, end_time in movements_times])} seconds")
+            print(f"Average time: {sum([end_time - start_time for start_time, end_time in movements_times]) / len(movements_times)} seconds")
 
-            print(f"Mini game {i + 1} finished!")
-        
-        print("Game finished!")
-        print("Time for each movement:")
-        for i in range(len(movements_times)):
-            print(f"Movement {i + 1}: {movements_times[i][1] - movements_times[i][0]} seconds")
-        print(f"Total time: {sum([end_time - start_time for start_time, end_time in movements_times])} seconds")
-        print(f"Average time: {sum([end_time - start_time for start_time, end_time in movements_times]) / len(movements_times)} seconds")
+        finally:
+            self.running = False  # Para a captura de vídeo
+            video_thread.join()  # Espera a thread de vídeo terminar
+            self.cap.release()  # Libera a captura de vídeo
+            cv2.destroyAllWindows()  # Fecha todas as janelas
+            print("Game finished!")
 
-        # Encerra o jogo
-
-        self.running = False  # Para a captura de vídeo
-        video_thread.join()  # Espera a thread de vídeo terminar
-        self.cap.release()  # Libera a captura de vídeo
-        cv2.destroyAllWindows()  # Fecha todas as janelas
-
-        print("Game finished!")
 
 if __name__ == "__main__":
     game = TestReflexesGame(input("Enter your name: "))

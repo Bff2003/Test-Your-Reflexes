@@ -11,9 +11,10 @@ class ObjectDetector:
         options = vision.ObjectDetectorOptions(base_options=base_options, score_threshold=0.5)
         self.detector = vision.ObjectDetector.create_from_options(options)
 
-    def visualize(self, image, detections: list):
+    def visualize(self, image, detections: list, print_labels=False):
         for detection in detections:
-            print(f"{detection.categories[0].category_name}: {detection.categories[0].score}")
+            if print_labels:
+                print(f"{detection.categories[0].category_name}: {detection.categories[0].score}")
             # Draw bounding box.
             bbox = detection.bounding_box
             start_point = bbox.origin_x, bbox.origin_y
@@ -21,7 +22,7 @@ class ObjectDetector:
             cv2.rectangle(image, start_point, end_point, (255, 0, 0), 2)
         return image
     
-    def detect(self, frame) -> list:
+    def detect(self, frame, print_labels=False) -> list:
         """ Detect objects in the frame and return a list of detections. """
         # Convert the image to RGB.
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -33,7 +34,8 @@ class ObjectDetector:
         detections = self.detector.detect(image)
 
         for detection in detections.detections:
-            print(f"{detection.categories[0].category_name}: {detection.categories[0].score}")
+            if print_labels:
+                print(f"{detection.categories[0].category_name}: {detection.categories[0].score}")
         return detections.detections
 
 if __name__ == "__main__":
