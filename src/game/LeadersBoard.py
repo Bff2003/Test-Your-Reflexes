@@ -21,6 +21,9 @@ class LeadersBoard:
         if not os.path.exists('assets/leaders.json'):
             with open('assets/leaders.json', 'w') as file:
                 json.dump([], file)
+        else:
+            with open('assets/leaders.json', 'r') as file:
+                self.__leaders = json.load(file)
     
     def __save_leaders(self):
         with open('assets/leaders.json', 'w') as file:
@@ -29,11 +32,11 @@ class LeadersBoard:
     def __duplicate_leader(self, name: str):
         for leader in self.__leaders:
             if leader[0] == name: 
-                return True 
+                return leader 
         return False
 
     def add_leader(self, name: str, time: float, image = None):
-        if self.__duplicate_leader(name):
+        if self.__duplicate_leader(name) != False and self.__duplicate_leader(name)[1] <= time:
             return False
 
         self.__leaders.append((name, time, image))
