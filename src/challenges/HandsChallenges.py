@@ -116,18 +116,18 @@ class HandsChallenges:
                 middle_down = hand[10].x > hand[12].x # medio fechado
                 ring_down = hand[14].x > hand[16].x # anelar fechado
 
-                if (
-                    thumb_up 
-                    and pinky_up
-                    and index_down 
-                    and middle_down 
-                    and ring_down
-                ):
+                if (thumb_up and pinky_up and index_down and middle_down and ring_down):
                     return True
 
-            elif detections.handedness[i][0].category_name == "Left": # TODO Left Call Me Gesture
-                print("Please use the right hand")
-                continue
+            elif detections.handedness[i][0].category_name == "Left":
+                thumb_up = hand[self.hands_detector.THUMB_TIP_INDEX].y < hand[self.hands_detector.THUMB_MCP_INDEX].y # polegar esticado
+                pinky_up = hand[20].x < hand[18].x # mindinho esticado
+                index_down = hand[6].x < hand[8].x # indicador fechado
+                middle_down = hand[10].x < hand[12].x # medio fechado
+                ring_down = hand[14].x < hand[16].x # anelar fechado
+
+                if (thumb_up and pinky_up and index_down and middle_down and ring_down):
+                    return True
 
         return False
 
@@ -171,7 +171,7 @@ if __name__ == "__main__":
             print("Ignoring empty camera frame.")
             continue
 
-        print(hands_challenges.is_v_gesture_in_frame(frame))
+        print(hands_challenges.is_callme_gesture_in_frame(frame))
 
         detections = hands_detector.detect(frame)
         image = hands_detector.visualize(frame, detections)
