@@ -6,6 +6,7 @@ from src.game.LeadersBoard import LeadersBoard
 from src.game.Challenge import Challenge
 from src.challenges.HandsChallenges import HandsChallenges
 from src.challenges.ObjectsChallenges import ObjectsChallenges
+from src.challenges.PoseChallenges import PoseChallenges
 
 class TestReflexesGame:
     LEADERS_LIST = []
@@ -17,6 +18,16 @@ class TestReflexesGame:
         Challenge("Fixe", HandsChallenges().is_fixe_gesture_in_frame, Challenge.HANDS),
 
         Challenge("Phone in screen", ObjectsChallenges().is_phone_in_frame, Challenge.OBJECT),
+        # Challenge("Bottle in screen", ObjectsChallenges().is_bottle_in_frame, Challenge.OBJECT),
+        # Challenge("Cup in screen", ObjectsChallenges().is_cup_in_frame, Challenge.OBJECT),
+        # Challenge("Backpack in screen", ObjectsChallenges().is_backpack_in_frame, Challenge.OBJECT),
+        # Challenge("Remote in screen", ObjectsChallenges().is_remote_in_frame, Challenge.OBJECT),
+    
+        Challenge("Two hands up", PoseChallenges().is_two_hands_up_in_frame, Challenge.POSE),
+        # Challenge("Hand on head", PoseChallenges().is_hand_on_head_in_frame, Challenge.POSE),
+        # Challenge("T pose", PoseChallenges().is_t_pose_in_frame, Challenge.POSE),
+        # Challenge("Turn head", PoseChallenges().is_turn_head_in_frame, Challenge.POSE),
+        # Challenge("Tilt head", PoseChallenges().is_tilt_head_in_frame, Challenge.POSE),
     ]
 
     def __init__(self, name):

@@ -50,7 +50,7 @@ class PoseDetector:
         self.detector = vision.PoseLandmarker.create_from_options(options)
 
     def visualize(self, image, detections: list):
-        pose_landmarks_list = detections
+        pose_landmarks_list = detections.pose_landmarks
         annotated_image = np.copy(image)
 
         # Loop through the detected poses to visualize.
@@ -82,7 +82,7 @@ class PoseDetector:
 
         # for detection in detections.pose_landmarks:
         #     print(detection)
-        return detections.pose_landmarks
+        return detections
 
 if __name__ == "__main__":
     detector = PoseDetector()
