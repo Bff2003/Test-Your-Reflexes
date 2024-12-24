@@ -36,8 +36,16 @@ class LeadersBoard:
         return False
 
     def add_leader(self, name: str, time: float, image = None):
-        if self.__duplicate_leader(name) != False and self.__duplicate_leader(name)[1] <= time:
+        duplicate = self.__duplicate_leader(name)
+        if duplicate != False and duplicate[1] <= time:
             return False
+        
+        if duplicate != False and duplicate[1] > time:
+            duplicate[1] = time
+            duplicate[2] = image
+            self.__leaders = self.__order_leaders()
+            self.__save_leaders()
+            return self.get_leaders()
 
         self.__leaders.append((name, time, image))
 
