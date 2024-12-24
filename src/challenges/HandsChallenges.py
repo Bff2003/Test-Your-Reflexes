@@ -11,8 +11,27 @@ class HandsChallenges:
             hands_detector = HandsDetector()
         self.hands_detector = hands_detector
 
-    def is_v_gesture_in_frame(self, frame): # TODO V Gesture | redo it
-        raise NotImplementedError
+    def is_v_gesture_in_frame(self, frame):
+        detections = self.hands_detector.detect(frame)
+        hand_landmarks = detections.hand_landmarks
+        
+        if hand_landmarks is None or len(hand_landmarks) == 0:
+            return False
+
+        for i in range(len(hand_landmarks)):
+            hand = hand_landmarks[i]
+
+            index_finger_up = hand[8].y < hand[6].y # indicador esticado para cima
+            middle_finger_up = hand[12].y < hand[10].y # medio fechado para cima
+            ring_finger_down = hand[14].y < hand[16].y # anelar fechado para baixo
+            pinky_down = hand[18].y < hand[20].y # mindinho fechado para baixo
+
+            spacing_between_index_and_middle_finger = abs(hand[8].x - hand[10].x) > 0.1 # espaco entre o indicador e o medio
+
+            if index_finger_up and middle_finger_up and ring_finger_down and pinky_down and spacing_between_index_and_middle_finger:
+                return True
+
+        return False
 
     def is_closed_hand_gesture_in_frame(self, frame):
         # Detecta os landmarks das mãos no frame
