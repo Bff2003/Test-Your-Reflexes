@@ -10,9 +10,17 @@ class PoseChallenges: # TODO Implement this class
             pose_detector = PoseDetector()
         self.pose_detector = pose_detector
 
-    def is_hand_on_head_in_frame(self, frame): # TODO Hand On Head
-        raise NotImplementedError
-    
+    def is_hand_above_head_in_frame(self, frame):
+        detections = self.pose_detector.detect(frame)
+        for detection in detections.pose_landmarks:
+            left_hand_up = detection[20].y < detection[0].y
+            left_hand_nose_distance = abs(detection[20].y - detection[0].y) > 0.2
+
+            right_hand_up = detection[19].y < detection[0].y
+            right_hand_nose_distance = abs(detection[19].y - detection[0].y) > 0.2
+            return (left_hand_up and left_hand_nose_distance) or (right_hand_up and right_hand_nose_distance)
+        return False
+
     def is_two_hands_up_in_frame(self, frame):
         detections = self.pose_detector.detect(frame)
         for detection in detections.pose_landmarks:
@@ -54,7 +62,7 @@ if __name__ == "__main__":
         detections = pose_detector.detect(frame)
         image = pose_detector.visualize(frame, detections)
 
-        print(pose_challenges.is_tilted_to_side_in_frame(frame))
+        print(pose_challenges.is_hand_above_head_in_frame(frame))
         # print(pose_challenges.is_tilt_head_in_frame(frame))
 
         # Display the annotated frame.
