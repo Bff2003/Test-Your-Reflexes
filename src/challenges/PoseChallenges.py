@@ -19,7 +19,17 @@ class PoseChallenges: # TODO Implement this class
             right_hand_up = detection[16].y < detection[8].y
             left_hand_up = detection[15].y < detection[9].y
             return left_hand_up and right_hand_up
-    
+        return False
+
+    def is_tilted_to_side_in_frame(self, frame, threshold = 0.02):
+        """ Cabeça inclinada para a esquerda ou para a direita"""
+        detections = self.pose_detector.detect(frame)
+        for detection in detections.pose_landmarks:
+            eye_diff = abs(detection[1].y - detection[3].y)
+            if eye_diff > threshold: # se houver uma diferenca grande entre os olhos no eixo y
+                return True
+        return False
+
     def is_t_pose_in_frame(self, frame): # TODO T Pose
         raise NotImplementedError
     
@@ -44,14 +54,15 @@ if __name__ == "__main__":
         detections = pose_detector.detect(frame)
         image = pose_detector.visualize(frame, detections)
 
-        print(pose_challenges.is_two_hands_up_in_frame(frame))
+        print(pose_challenges.is_tilted_to_side_in_frame(frame))
+        # print(pose_challenges.is_tilt_head_in_frame(frame))
 
         # Display the annotated frame.
         cv2.imshow('MediaPipe Object Detection', image)
 
         if cv2.waitKey(5) & 0xFF == 27:
             break
-
+            
     # Release resources.
     cap.release()
 

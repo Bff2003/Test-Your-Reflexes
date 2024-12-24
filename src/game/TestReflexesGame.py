@@ -24,6 +24,7 @@ class TestReflexesGame:
         # Challenge("Remote in screen", ObjectsChallenges().is_remote_in_frame, Challenge.OBJECT),
     
         Challenge("Two hands up", PoseChallenges().is_two_hands_up_in_frame, Challenge.POSE),
+        Challenge("Tilted to side Right or Left", PoseChallenges().is_tilted_to_side_in_frame, Challenge.POSE),
         # Challenge("Hand on head", PoseChallenges().is_hand_on_head_in_frame, Challenge.POSE),
         # Challenge("T pose", PoseChallenges().is_t_pose_in_frame, Challenge.POSE),
         # Challenge("Turn head", PoseChallenges().is_turn_head_in_frame, Challenge.POSE),
