@@ -11,7 +11,7 @@ class TestReflexesGame:
     LEADERS_LIST = []
     MOVEMENTS_LIST = [
         Challenge("Soco", HandsChallenges().is_closed_hand_gesture_in_frame, Challenge.HANDS),
-        # Challenge("L", HandsChallenges().is_l_gesture_in_frame, Challenge.HANDS),
+        Challenge("L", HandsChallenges().is_l_gesture_in_frame, Challenge.HANDS),
         Challenge("Call me", HandsChallenges().is_callme_gesture_in_frame, Challenge.HANDS),
         # Challenge("V", HandsChallenges().is_v_gesture_in_frame, Challenge.HANDS),
         Challenge("Fixe", HandsChallenges().is_fixe_gesture_in_frame, Challenge.HANDS),

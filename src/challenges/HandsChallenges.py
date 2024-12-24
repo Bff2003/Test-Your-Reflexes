@@ -51,8 +51,34 @@ class HandsChallenges:
 
         return False
 
-    def is_l_gesture_in_frame(self, frame): # TODO L Gesture | redo it
-        raise NotImplementedError
+    def is_l_gesture_in_frame(self, frame):
+        detections = self.hands_detector.detect(frame)
+        hand_landmarks = detections.hand_landmarks
+        
+        if hand_landmarks is None or len(hand_landmarks) == 0:
+            return False
+
+        for i in range(len(hand_landmarks)):
+            hand = hand_landmarks[i]
+
+            index_finger_up = hand[8].y < hand[6].y # indicador esticado para cima
+            middle_finger_down = hand[10].y < hand[12].y # medio fechado para baixo
+            ring_finger_down = hand[14].y < hand[16].y # anelar fechado para baixo
+            pinky_down = hand[18].y < hand[20].y # mindinho fechado para baixo
+
+            if detections.handedness[i][0].category_name == "Right":
+                thumb_right = hand[4].x > hand[2].x # polegar esticado para a direita
+
+                if index_finger_up and middle_finger_down and ring_finger_down and pinky_down and thumb_right:
+                    return True
+            
+            elif detections.handedness[i][0].category_name == "Left":
+                thumb_left = hand[4].x < hand[2].x # polegar esticado para a esquerda
+
+                if index_finger_up and middle_finger_down and ring_finger_down and pinky_down and thumb_left:
+                    return True
+
+        return False
 
     def is_callme_gesture_in_frame(self, frame):
         detections = self.hands_detector.detect(frame)
@@ -126,7 +152,7 @@ if __name__ == "__main__":
             print("Ignoring empty camera frame.")
             continue
 
-        print(hands_challenges.is_callme_gesture_in_frame(frame))
+        print(hands_challenges.is_v_gesture_in_frame(frame))
 
         detections = hands_detector.detect(frame)
         image = hands_detector.visualize(frame, detections)
