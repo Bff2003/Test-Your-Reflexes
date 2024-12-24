@@ -132,12 +132,61 @@ class HandsChallenges:
 
         return False
 
-    
-    # V
-    # SOCO
-    # L
-    # Liga-me
-    # Fixe
+    def is_callme_gesture_in_frame(self, frame):
+        detections = self.hands_detector.detect(frame)
+        hand_landmarks = detections.hand_landmarks
+        
+        if hand_landmarks is None or len(hand_landmarks) == 0:
+            return False
+
+        for i in range(len(hand_landmarks)):
+            hand = hand_landmarks[i]
+
+            if detections.handedness[i][0].category_name == "Right":
+                thumb_up = hand[self.hands_detector.THUMB_TIP_INDEX].y < hand[self.hands_detector.THUMB_MCP_INDEX].y # polegar esticado
+                pinky_up = hand[20].x > hand[18].x # mindinho esticado
+                index_down = hand[6].x > hand[8].x # indicador fechado
+                middle_down = hand[10].x > hand[12].x # medio fechado
+                ring_down = hand[14].x > hand[16].x # anelar fechado
+
+                if (
+                    thumb_up 
+                    and pinky_up
+                    and index_down 
+                    and middle_down 
+                    and ring_down
+                ):
+                    return True
+
+        return False
+
+    def is_fixe_gesture_in_frame(self, frame):
+        detections = self.hands_detector.detect(frame)
+        hand_landmarks = detections.hand_landmarks
+        for i in range(len(hand_landmarks)):
+            hand = hand_landmarks[i]
+            if detections.handedness[i][0].category_name == "Right":
+                thumb_up = hand[self.hands_detector.THUMB_TIP_INDEX].y < hand[self.hands_detector.THUMB_MCP_INDEX].y
+                index_finger_down = hand[8].x < hand[6].x
+                middle_finger_down = hand[12].x < hand[10].x
+                ring_finger_down = hand[16].x < hand[14].x
+                pinky_finger_down = hand[20].x < hand[18].x
+            
+                if thumb_up and index_finger_down and middle_finger_down and ring_finger_down and pinky_finger_down:
+                    return True
+
+            elif detections.handedness[i][0].category_name == "Left":
+                thumb_up = hand[self.hands_detector.THUMB_TIP_INDEX].y < hand[self.hands_detector.THUMB_MCP_INDEX].y
+                index_finger_down = hand[8].x > hand[6].x
+                middle_finger_down = hand[12].x > hand[10].x
+                ring_finger_down = hand[16].x > hand[14].x
+                pinky_finger_down = hand[20].x > hand[18].x
+            
+                if thumb_up and index_finger_down and middle_finger_down and ring_finger_down and pinky_finger_down:
+                    return True
+
+        return False
+
 
 if __name__ == "__main__":
     hands_detector = HandsDetector()
@@ -151,11 +200,10 @@ if __name__ == "__main__":
             print("Ignoring empty camera frame.")
             continue
 
-        print(hands_challenges.is_l_gesture_in_frame(frame))
+        print(hands_challenges.is_callme_gesture_in_frame(frame))
 
         detections = hands_detector.detect(frame)
         image = hands_detector.visualize(frame, detections)
-
 
         # Display the annotated frame.
         cv2.imshow('MediaPipe Object Detection', image)
@@ -165,8 +213,3 @@ if __name__ == "__main__":
 
     # Release resources.
     cap.release()
-
-
-    
-
-    
