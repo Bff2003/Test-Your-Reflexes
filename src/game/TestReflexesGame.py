@@ -11,11 +11,11 @@ class TestReflexesGame:
     LEADERS_LIST = []
     MOVEMENTS_LIST = [
         Challenge("Soco", HandsChallenges().is_closed_hand_gesture_in_frame, Challenge.HANDS),
-        Challenge("L", HandsChallenges().is_l_gesture_in_frame, Challenge.HANDS),
+        # Challenge("L", HandsChallenges().is_l_gesture_in_frame, Challenge.HANDS),
         Challenge("Call me", HandsChallenges().is_callme_gesture_in_frame, Challenge.HANDS),
-        Challenge("V", HandsChallenges().is_v_gesture_in_frame, Challenge.HANDS),
+        # Challenge("V", HandsChallenges().is_v_gesture_in_frame, Challenge.HANDS),
         Challenge("Fixe", HandsChallenges().is_fixe_gesture_in_frame, Challenge.HANDS),
-        
+
         Challenge("Phone in screen", ObjectsChallenges().is_phone_in_frame, Challenge.OBJECT),
     ]
 
@@ -37,6 +37,7 @@ class TestReflexesGame:
             self.last_frame = frame.copy()
 
             # Aqui você pode adicionar a lógica para mostrar o frame ou processá-lo
+            frame = cv2.flip(frame, 1)
             cv2.imshow('Video Feed', frame)
 
             # Espera por uma tecla para fechar a janela

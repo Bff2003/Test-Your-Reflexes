@@ -11,48 +11,8 @@ class HandsChallenges:
             hands_detector = HandsDetector()
         self.hands_detector = hands_detector
 
-    def is_v_gesture_in_frame(self, frame):
-        # Detecta os landmarks das mãos no frame
-        hand_landmarks = self.hands_detector.detect(frame).hand_landmarks
-        
-        if hand_landmarks is None or len(hand_landmarks) == 0:
-            return False  # Retorna False se não houver landmarks detectados
-
-        # Obter as coordenadas dos dedos
-        for hand in hand_landmarks:
-            index_finger_tip = hand[self.hands_detector.INDEX_FINGER_TIP_INDEX]
-            index_finger_base = hand[self.hands_detector.INDEX_FINGER_MCP_INDEX]
-            
-            middle_finger_tip = hand[self.hands_detector.MIDDLE_FINGER_TIP_INDEX]
-            middle_finger_base = hand[self.hands_detector.MIDDLE_FINGER_MCP_INDEX]
-
-            pinky_tip = hand[self.hands_detector.PINKY_TIP_INDEX]
-            ring_finger_tip = hand[self.hands_detector.RING_FINGER_TIP_INDEX]
-            thumb_tip = hand[self.hands_detector.THUMB_TIP_INDEX]
-
-            # Verifica se os dedos indicador e do meio estão esticados
-            index_finger_straight = index_finger_tip.y < index_finger_base.y
-            middle_finger_straight = middle_finger_tip.y < middle_finger_base.y
-
-            # Verifica se os dedos mínimo, anelar e polegar estão fechados
-            pinky_closed = pinky_tip.y > hand[self.hands_detector.PINKY_MCP_INDEX].y
-            ring_finger_closed = ring_finger_tip.y > hand[self.hands_detector.RING_FINGER_MCP_INDEX].y
-            thumb_closed = thumb_tip.y > hand[self.hands_detector.THUMB_MCP_INDEX].y
-
-            # Verifica se os dedos estão separados (usando a distância entre as pontas dos dedos)
-            distance_between_fingers = abs(index_finger_tip.x - middle_finger_tip.x)
-            
-            # Define um limite para considerar que os dedos estão separados
-            separation_threshold = 0.1  # Ajuste conforme necessário
-
-            # Retorna True se os dedos indicador e do meio estiverem esticados e separados,
-            # e os dedos mínimo, anelar e polegar estiverem fechados
-            return (index_finger_straight and 
-                    middle_finger_straight and 
-                    distance_between_fingers > separation_threshold and 
-                    pinky_closed and 
-                    ring_finger_closed and 
-                    thumb_closed)
+    def is_v_gesture_in_frame(self, frame): # TODO V Gesture | redo it
+        raise NotImplementedError
 
     def is_closed_hand_gesture_in_frame(self, frame):
         # Detecta os landmarks das mãos no frame
@@ -91,46 +51,8 @@ class HandsChallenges:
 
         return False
 
-    def is_l_gesture_in_frame(self, frame):
-        # Detecta os landmarks das mãos no frame
-        hand_landmarks = self.hands_detector.detect(frame).hand_landmarks
-        
-        if hand_landmarks is None or len(hand_landmarks) == 0:
-            return False  # Retorna False se não houver landmarks detectados
-
-        # Obter as coordenadas dos dedos
-        for hand in hand_landmarks:
-            # Obter as coordenadas dos dedos
-            thumb_tip = hand[self.hands_detector.THUMB_TIP_INDEX]
-            thumb_base = hand[self.hands_detector.THUMB_MCP_INDEX]
-            
-            index_finger_tip = hand[self.hands_detector.INDEX_FINGER_TIP_INDEX]
-            index_finger_base = hand[self.hands_detector.INDEX_FINGER_MCP_INDEX]
-            
-            middle_finger_tip = hand[self.hands_detector.MIDDLE_FINGER_TIP_INDEX]
-            ring_finger_tip = hand[self.hands_detector.RING_FINGER_TIP_INDEX]
-            pinky_tip = hand[self.hands_detector.PINKY_TIP_INDEX]
-
-            # Verifica se o polegar está esticado para o lado
-            thumb_straight = thumb_tip.x > thumb_base.x and thumb_tip.y < thumb_base.y
-
-            # Verifica se o dedo indicador está esticado
-            index_finger_straight = index_finger_tip.y < index_finger_base.y
-
-            # Verifica se os dedos médio, anelar e mínimo estão fechados
-            middle_finger_closed = middle_finger_tip.y > hand[self.hands_detector.MIDDLE_FINGER_MCP_INDEX].y
-            ring_finger_closed = ring_finger_tip.y > hand[self.hands_detector.RING_FINGER_MCP_INDEX].y
-            pinky_closed = pinky_tip.y > hand[self.hands_detector.PINKY_MCP_INDEX].y
-
-            # Retorna True se o gesto "L" estiver presente
-            if (thumb_straight and 
-                index_finger_straight and 
-                middle_finger_closed and 
-                ring_finger_closed and 
-                pinky_closed):
-                return True
-
-        return False
+    def is_l_gesture_in_frame(self, frame): # TODO L Gesture | redo it
+        raise NotImplementedError
 
     def is_callme_gesture_in_frame(self, frame):
         detections = self.hands_detector.detect(frame)
@@ -157,6 +79,10 @@ class HandsChallenges:
                     and ring_down
                 ):
                     return True
+
+            elif detections.handedness[i][0].category_name == "Left": # TODO Left Call Me Gesture
+                print("Please use the right hand")
+                continue
 
         return False
 
