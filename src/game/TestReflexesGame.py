@@ -10,26 +10,55 @@ from src.challenges.PoseChallenges import PoseChallenges
 
 class TestReflexesGame:
     LEADERS_LIST = []
-    MOVEMENTS_LIST = [
-        Challenge("Soco", HandsChallenges().is_closed_hand_gesture_in_frame, Challenge.HANDS),
-        Challenge("L", HandsChallenges().is_l_gesture_in_frame, Challenge.HANDS),
-        Challenge("Call me", HandsChallenges().is_callme_gesture_in_frame, Challenge.HANDS),
-        Challenge("V", HandsChallenges().is_v_gesture_in_frame, Challenge.HANDS),
-        Challenge("Fixe", HandsChallenges().is_fixe_gesture_in_frame, Challenge.HANDS),
 
-        Challenge("Phone in screen", ObjectsChallenges().is_phone_in_frame, Challenge.OBJECT),
-        # Challenge("Bottle in screen", ObjectsChallenges().is_bottle_in_frame, Challenge.OBJECT),
-        # Challenge("Cup in screen", ObjectsChallenges().is_cup_in_frame, Challenge.OBJECT),
-        # Challenge("Backpack in screen", ObjectsChallenges().is_backpack_in_frame, Challenge.OBJECT),
-        # Challenge("Remote in screen", ObjectsChallenges().is_remote_in_frame, Challenge.OBJECT),
-    
-        Challenge("Two hands up", PoseChallenges().is_two_hands_up_in_frame, Challenge.POSE),
-        Challenge("Tilted to side Right or Left", PoseChallenges().is_tilted_to_side_in_frame, Challenge.POSE),
-        Challenge("Hand above head", PoseChallenges().is_hand_above_head_in_frame, Challenge.POSE),
-        Challenge("T pose", PoseChallenges().is_t_pose_in_frame, Challenge.POSE),
-        Challenge("Turn head", PoseChallenges().is_turn_head_in_frame, Challenge.POSE),
-        # Challenge("Tilt head", PoseChallenges().is_tilt_head_in_frame, Challenge.POSE),
-    ]
+    def __pose_challenges():
+        return [
+            Challenge("Two hands up", PoseChallenges().is_two_hands_up_in_frame, Challenge.POSE),
+            Challenge("Tilted to side Right or Left", PoseChallenges().is_tilted_to_side_in_frame, Challenge.POSE),
+            Challenge("Hand above head", PoseChallenges().is_hand_above_head_in_frame, Challenge.POSE),
+            Challenge("T pose", PoseChallenges().is_t_pose_in_frame, Challenge.POSE),
+            Challenge("Turn head", PoseChallenges().is_turn_head_in_frame, Challenge.POSE),
+            # Challenge("Tilt head", PoseChallenges().is_tilt_head_in_frame, Challenge.POSE),
+        ]
+
+    def __object_challenges(allowed_objects = ["phone", "bottle", "cup", "backpack", "remote"]):
+        to_return = []
+        if "phone" in allowed_objects: to_return.append(Challenge("Phone in screen", ObjectsChallenges().is_phone_in_frame, Challenge.OBJECT))
+        if "bottle" in allowed_objects: to_return.append(Challenge("Cup in screen", ObjectsChallenges().is_cup_in_frame, Challenge.OBJECT))
+        if "cup" in allowed_objects: to_return.append(Challenge("Backpack in screen", ObjectsChallenges().is_backpack_in_frame, Challenge.OBJECT))
+        if "remote" in allowed_objects: to_return.append(Challenge("Remote in screen", ObjectsChallenges().is_remote_in_frame, Challenge.OBJECT))
+        return to_return
+
+    def __hands_challenges():
+        return [
+            Challenge("Soco", HandsChallenges().is_closed_hand_gesture_in_frame, Challenge.HANDS),
+            Challenge("L", HandsChallenges().is_l_gesture_in_frame, Challenge.HANDS),
+            Challenge("Call me", HandsChallenges().is_callme_gesture_in_frame, Challenge.HANDS),
+            Challenge("V", HandsChallenges().is_v_gesture_in_frame, Challenge.HANDS),
+            Challenge("Fixe", HandsChallenges().is_fixe_gesture_in_frame, Challenge.HANDS)
+        ]
+
+    def __ask(title, options: list, default: int, repeat_title = True, pre_ask: str = None):
+        i = 0
+        print(title)
+        while True:
+            if i != 0 and repeat_title == True:
+                print(title)
+            
+            for k in range(len(options)):
+                print(f"\t{k+1} - {options[k]}")
+            
+            ask = "Choose: "
+            if (pre_ask != None):
+                ask = pre_ask
+            
+            response = input(ask)
+
+            choosed = int(response)-1
+            if (choosed >= 0 and choosed <= len(options)-1):
+                return choosed
+            
+            i=i+1
 
     def __init__(self, name):
         self.name = name if name else input("Enter your name: ")
@@ -37,6 +66,11 @@ class TestReflexesGame:
         self.running = True
         self.last_frame = None
         self.leaders_board = LeadersBoard()
+
+        self.challenges_allowed = []
+        self.challenges_allowed = self.challenges_allowed + TestReflexesGame.__hands_challenges()
+        self.challenges_allowed = self.challenges_allowed + TestReflexesGame.__pose_challenges()
+        self.challenges_allowed = self.challenges_allowed + TestReflexesGame.__object_challenges(allowed_objects=["phone"])
 
     def capture_video(self):
         while self.running:
@@ -69,18 +103,22 @@ class TestReflexesGame:
             video_thread.start()
 
             movements_times = []
+            last_movement = -1
             for i in range(5):  # Exemplo de 5 movimentos
-                movement_choosed = random.randint(0, len(self.MOVEMENTS_LIST) - 1)
-
+                while True:
+                    movement_choosed = random.randint(0, len(self.challenges_allowed) - 1)
+                    if (movement_choosed != last_movement):
+                        break
+                
                 # input("Press enter to simulate the movement")
                 self.traffic_light()
-                print(f"Movement chosen: {self.MOVEMENTS_LIST[movement_choosed].name}")
+                print(f"Movement chosen: {self.challenges_allowed[movement_choosed].name}")
                 start_time = time.time()
                 while True:
                     # Passa o frame atual para is_valid()
                     if self.last_frame is None:
                         continue
-                    if not self.MOVEMENTS_LIST[movement_choosed].is_valid(self.last_frame):  # Se o movimento não for válido
+                    if not self.challenges_allowed[movement_choosed].is_valid(self.last_frame):  # Se o movimento não for válido
                         # print("Movement not valid!")
                         continue
                     
