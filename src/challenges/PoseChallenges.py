@@ -49,8 +49,15 @@ class PoseChallenges: # TODO Implement this class
                 return True
         return False
     
-    def is_turn_head_in_frame(self, frame): # TODO Turn Head
-        raise NotImplementedError
+    def is_turn_head_in_frame(self, frame, threshold = 0.07):
+        """ Cabeça virada para a esquerda ou direita """
+        detections = self.pose_detector.detect(frame)
+        for detection in detections.pose_landmarks:
+            end_face = abs(detection[7].x - detection[8].x)
+
+            if end_face < threshold:
+                return True
+        return False
     
     def is_tilt_head_in_frame(self, frame): # TODO Tilt Head
         raise NotImplementedError
@@ -70,7 +77,10 @@ if __name__ == "__main__":
         detections = pose_detector.detect(frame)
         image = pose_detector.visualize(frame, detections)
 
-        print(pose_challenges.is_t_pose_in_frame(frame))
+        a = pose_challenges.is_turn_head_in_frame(frame)
+        print(a)
+        if a == True:
+            break
         # print(pose_challenges.is_tilt_head_in_frame(frame))
 
         # Display the annotated frame.
