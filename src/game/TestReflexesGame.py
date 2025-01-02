@@ -7,23 +7,24 @@ from src.game.Challenge import Challenge
 from src.challenges.HandsChallenges import HandsChallenges
 from src.challenges.ObjectsChallenges import ObjectsChallenges
 from src.challenges.PoseChallenges import PoseChallenges
+from src.game.drawables.IndicationDrawable  import IndicationDrawable
 
 class TestReflexesGame:
     LEADERS_LIST = []
 
     def __pose_challenges():
         return [
-            Challenge("Two hands up", PoseChallenges().is_two_hands_up_in_frame, Challenge.POSE),
-            Challenge("Tilted to side Right or Left", PoseChallenges().is_tilted_to_side_in_frame, Challenge.POSE),
-            Challenge("Hand above head", PoseChallenges().is_hand_above_head_in_frame, Challenge.POSE),
-            Challenge("T pose", PoseChallenges().is_t_pose_in_frame, Challenge.POSE),
-            Challenge("Turn head", PoseChallenges().is_turn_head_in_frame, Challenge.POSE),
-            # Challenge("Tilt head", PoseChallenges().is_tilt_head_in_frame, Challenge.POSE),
+            Challenge("Two hands up", PoseChallenges().is_two_hands_up_in_frame, Challenge.POSE, "assets/images/examples/pose/hands_up.png"),
+            Challenge("Tilted to side Right or Left", PoseChallenges().is_tilted_to_side_in_frame, Challenge.POSE, "assets/images/examples/pose/tilted_to_side.jpg"),
+            Challenge("Hand above head", PoseChallenges().is_hand_above_head_in_frame, Challenge.POSE, "assets/images/examples/pose/hand_above_head.jpg"),
+            Challenge("T pose", PoseChallenges().is_t_pose_in_frame, Challenge.POSE, "assets/images/examples/pose/T.png"),
+            Challenge("Turn head", PoseChallenges().is_turn_head_in_frame, Challenge.POSE, "assets/images/examples/pose/turn_head.jpg"),
+            # Challenge("Tilt head", PoseChallenges().is_tilt_head_in_frame, Challenge.POSE, "assets/images/examples/pose/tilt_head.jpg"),
         ]
 
     def __object_challenges(allowed_objects = ["phone", "bottle", "cup", "backpack", "remote"]):
         to_return = []
-        if "phone" in allowed_objects: to_return.append(Challenge("Phone in screen", ObjectsChallenges().is_phone_in_frame, Challenge.OBJECT))
+        if "phone" in allowed_objects: to_return.append(Challenge("Phone in screen", ObjectsChallenges().is_phone_in_frame, Challenge.OBJECT, "assets/images/examples/objects/phone.png"))
         if "bottle" in allowed_objects: to_return.append(Challenge("Cup in screen", ObjectsChallenges().is_cup_in_frame, Challenge.OBJECT))
         if "cup" in allowed_objects: to_return.append(Challenge("Backpack in screen", ObjectsChallenges().is_backpack_in_frame, Challenge.OBJECT))
         if "remote" in allowed_objects: to_return.append(Challenge("Remote in screen", ObjectsChallenges().is_remote_in_frame, Challenge.OBJECT))
@@ -31,11 +32,11 @@ class TestReflexesGame:
 
     def __hands_challenges():
         return [
-            Challenge("Soco", HandsChallenges().is_closed_hand_gesture_in_frame, Challenge.HANDS),
-            Challenge("L", HandsChallenges().is_l_gesture_in_frame, Challenge.HANDS),
-            Challenge("Call me", HandsChallenges().is_callme_gesture_in_frame, Challenge.HANDS),
-            Challenge("V", HandsChallenges().is_v_gesture_in_frame, Challenge.HANDS),
-            Challenge("Fixe", HandsChallenges().is_fixe_gesture_in_frame, Challenge.HANDS)
+            Challenge("Soco", HandsChallenges().is_closed_hand_gesture_in_frame, Challenge.HANDS, "assets/images/examples/hands/soco.png"),
+            Challenge("L", HandsChallenges().is_l_gesture_in_frame, Challenge.HANDS, "assets/images/examples/hands/L.png"),
+            Challenge("Call me", HandsChallenges().is_callme_gesture_in_frame, Challenge.HANDS, "assets/images/examples/hands/callme.png"),
+            Challenge("V", HandsChallenges().is_v_gesture_in_frame, Challenge.HANDS, "assets/images/examples/hands/v.png"),
+            Challenge("Fixe", HandsChallenges().is_fixe_gesture_in_frame, Challenge.HANDS, "assets/images/examples/hands/fixe.png")
         ]
 
     def __ask(title, options: list, default: int, repeat_title = True, pre_ask: str = None):
@@ -66,6 +67,7 @@ class TestReflexesGame:
         self.running = True
         self.last_frame = None
         self.leaders_board = LeadersBoard()
+        self.actual_challenge = None
 
         self.challenges_allowed = []
         self.challenges_allowed = self.challenges_allowed + TestReflexesGame.__hands_challenges()
@@ -82,9 +84,18 @@ class TestReflexesGame:
             # Armazena o último frame capturado
             self.last_frame = frame.copy()
 
+            self.drawable_frame = cv2.flip(self.last_frame, 1)
+
+            try:
+                if self.actual_challenge is not None:
+                    if self.actual_challenge.image is not None and self.actual_challenge is not None:
+                        id = IndicationDrawable(100, 20)
+                        self.drawable_frame = id.draw(self.drawable_frame, cv2.imread(self.actual_challenge.image), ["Type:" + str(self.actual_challenge.challenge_type),"Do the challenge:", self.actual_challenge.name], (120, 120))
+            except AttributeError:
+                pass
+            
             # Aqui você pode adicionar a lógica para mostrar o frame ou processá-lo
-            frame = cv2.flip(frame, 1)
-            cv2.imshow('Video Feed', frame)
+            cv2.imshow('Video Feed', self.drawable_frame)
 
             # Espera por uma tecla para fechar a janela
             if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -118,10 +129,14 @@ class TestReflexesGame:
                     # Passa o frame atual para is_valid()
                     if self.last_frame is None:
                         continue
+
+                    self.actual_challenge = self.challenges_allowed[movement_choosed]
+                    
                     if not self.challenges_allowed[movement_choosed].is_valid(self.last_frame):  # Se o movimento não for válido
                         # print("Movement not valid!")
                         continue
                     
+                    self.actual_challenge = None
                     print("Movement valid!")
                     break
 

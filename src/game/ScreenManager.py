@@ -4,20 +4,6 @@ class ScreenManager:
     def __init__(self):
         self.current_frame = None
         self.objects = []
-
-    class Object:
-        def __init__(self, location: (int, int), size: (int, int), image_path: str):
-            self.x = location[0]
-            self.y = location[1]
-            self.width = size[0]
-            self.height = size[1]
-            self.image = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
-
-        def update(self, location: (int, int), size: (int, int)):
-            self.x = location[0]
-            self.y = location[1]
-            self.width = size[0]
-            self.height = size[1]
         
     def add_object(self, location: (int, int), size: (int, int), image_path: str):
         self.objects.append(self.Object(location, size, image_path))
