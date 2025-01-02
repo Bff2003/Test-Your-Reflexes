@@ -38,8 +38,16 @@ class PoseChallenges: # TODO Implement this class
                 return True
         return False
 
-    def is_t_pose_in_frame(self, frame): # TODO T Pose
-        raise NotImplementedError
+    def is_t_pose_in_frame(self, frame, threshold = 0.1):
+        """ Braços esticados """
+        detections = self.pose_detector.detect(frame)
+        for detection in detections.pose_landmarks:
+            right_arm = abs(detection[11].y - detection[13].y)
+            left_arm = abs(detection[12].y - detection[14].y)
+
+            if right_arm < threshold and left_arm < threshold:
+                return True
+        return False
     
     def is_turn_head_in_frame(self, frame): # TODO Turn Head
         raise NotImplementedError
@@ -62,7 +70,7 @@ if __name__ == "__main__":
         detections = pose_detector.detect(frame)
         image = pose_detector.visualize(frame, detections)
 
-        print(pose_challenges.is_hand_above_head_in_frame(frame))
+        print(pose_challenges.is_t_pose_in_frame(frame))
         # print(pose_challenges.is_tilt_head_in_frame(frame))
 
         # Display the annotated frame.
