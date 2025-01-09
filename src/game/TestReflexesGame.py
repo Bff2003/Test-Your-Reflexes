@@ -8,6 +8,7 @@ from src.challenges.HandsChallenges import HandsChallenges
 from src.challenges.ObjectsChallenges import ObjectsChallenges
 from src.challenges.PoseChallenges import PoseChallenges
 from src.game.drawables.IndicationDrawable  import IndicationDrawable
+from src.game.drawables.TrafficLightDrawable import TrafficLightDrawable
 
 class TestReflexesGame:
     LEADERS_LIST = []
@@ -68,6 +69,7 @@ class TestReflexesGame:
         self.last_frame = None
         self.leaders_board = LeadersBoard()
         self.actual_challenge = None
+        self.traffic_light_drawable = TrafficLightDrawable()
 
         self.challenges_allowed = []
         self.challenges_allowed = self.challenges_allowed + TestReflexesGame.__hands_challenges()
@@ -86,6 +88,7 @@ class TestReflexesGame:
 
             self.drawable_frame = cv2.flip(self.last_frame, 1)
 
+            self.drawable_frame = self.traffic_light_drawable.draw(self.drawable_frame, margin=(10, 100))
             try:
                 if self.actual_challenge is not None:
                     if self.actual_challenge.image is not None and self.actual_challenge is not None:
@@ -104,7 +107,15 @@ class TestReflexesGame:
     def traffic_light(self):
         for i in range(3, 0, -1):
             print(f"{i}...")
+            if i == 3:
+                self.traffic_light_drawable.set_state(TrafficLightDrawable.STATE.RED)
+            elif i == 2:
+                self.traffic_light_drawable.set_state(TrafficLightDrawable.STATE.YELLOW)
+            elif i == 1:
+                self.traffic_light_drawable.set_state(TrafficLightDrawable.STATE.GREEN)
+
             time.sleep(random.uniform(0.5, 1.5))
+            self.traffic_light_drawable.set_state(TrafficLightDrawable.STATE.ALL_GREEN)
         print("Go!")
 
     def start_game(self):
