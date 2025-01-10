@@ -69,6 +69,51 @@ class PoseDetector:
             solutions.drawing_styles.get_default_pose_landmarks_style())
         return annotated_image
     
+    def _add_mask(self, image, landmark, emoji_path, scale=1.0):
+        """Add a mask (emoji) to a specific landmark on the pose."""
+        # Load the emoji image with alpha channel
+        emoji = cv2.imread(emoji_path, cv2.IMREAD_UNCHANGED)
+        if emoji is None:
+            print(f"Error: Unable to load emoji from {emoji_path}")
+            return
+
+        # Get image dimensions
+        image_height, image_width, _ = image.shape
+
+        # Convert normalized coordinates to pixel coordinates
+        x_px = int(landmark.x * image_width)
+        y_px = int(landmark.y * image_height)
+
+        # Resize the emoji to fit a reasonable size around the landmark
+        emoji_height, emoji_width = emoji.shape[:2]
+        target_width = int(image_width * 0.1 * scale)  # 10% da largura da imagem, ajustável
+        target_height = int(emoji_height * (target_width / emoji_width))
+        emoji_resized = cv2.resize(emoji, (target_width, target_height), interpolation=cv2.INTER_AREA)
+
+        # Calculate top-left corner for overlay
+        x_start = max(0, x_px - target_width // 2)
+        y_start = max(0, y_px - target_height // 2)
+
+        # Overlay the emoji on the image
+        for i in range(target_height):
+            for j in range(target_width):
+                if y_start + i >= image.shape[0] or x_start + j >= image.shape[1]:
+                    continue
+                alpha = emoji_resized[i, j, 3] / 255.0  # Alpha channel
+                image[y_start + i, x_start + j] = (1 - alpha) * image[y_start + i, x_start + j] + alpha * emoji_resized[i, j, :3]
+
+    def visualize_mask(self, image, detections, emoji_path, scale=1.0):
+        """Visualize the pose with an emoji mask on specific landmarks."""
+        pose_landmarks_list = detections.pose_landmarks
+        annotated_image = np.copy(image)
+
+        for pose_landmarks in pose_landmarks_list:
+            # Add mask to the nose landmark as an example
+            nose_landmark = pose_landmarks[self.NOSE_INDEX]
+            self._add_mask(annotated_image, nose_landmark, emoji_path, scale)
+
+        return annotated_image
+
     def detect(self, frame) -> list:
         """ Detect objects in the frame and return a list of detections. """
         # Convert the image to RGB.
@@ -98,7 +143,8 @@ if __name__ == "__main__":
             continue
 
         detections = detector.detect(image)
-        image = detector.visualize(image, detections)
+        # image = detector.visualize(image, detections)
+        image = detector.visualize_mask(image, detections, emoji_path="assets/smile.png", scale=4.0)
 
         # Display the annotated frame.
         cv2.imshow('MediaPipe Object Detection', image)

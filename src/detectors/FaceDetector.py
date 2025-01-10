@@ -27,6 +27,43 @@ class FaceDetector:
         y_px = min(math.floor(normalized_y * image_height), image_height - 1)
         return x_px, y_px
 
+    def _add_mask(self, image, bbox, emoji_path, scale=1.0):
+        """Add a mask (emoji) to the detected face with a scaling factor."""
+        # Load the emoji image
+        emoji = cv2.imread(emoji_path, cv2.IMREAD_UNCHANGED)
+        if emoji is None:
+            print(f"Error: Unable to load emoji from {emoji_path}")
+            return
+
+        # Extract bounding box dimensions
+        x, y, w, h = bbox.origin_x, bbox.origin_y, bbox.width, bbox.height
+
+        # Adjust the size of the emoji using the scale factor
+        new_w, new_h = int(w * scale), int(h * scale)
+        emoji_resized = cv2.resize(emoji, (new_w, new_h), interpolation=cv2.INTER_AREA)
+
+        # Center the emoji over the detected face
+        x_center = x + w // 2
+        y_center = y + h // 2
+        x_start = max(0, x_center - new_w // 2)
+        y_start = max(0, y_center - new_h // 2)
+
+        # Overlay the emoji on the face
+        for i in range(new_h):
+            for j in range(new_w):
+                if y_start + i >= image.shape[0] or x_start + j >= image.shape[1]:
+                    continue
+                alpha = emoji_resized[i, j, 3] / 255.0  # Alpha channel
+                image[y_start + i, x_start + j] = (1 - alpha) * image[y_start + i, x_start + j] + alpha * emoji_resized[i, j, :3]
+
+
+    def visualize_mask(self, image, detections: list, emoji_path="emoji.png", scale=1.0):
+        for detection in detections:
+            bbox = detection.bounding_box
+            self._add_mask(image, bbox, emoji_path, scale)  # Add mask (emoji)
+
+        return image
+
     def visualize(self, image, detections: list):
         for detection in detections:
             print(f"{detection.categories[0].category_name}: {detection.categories[0].score}")
@@ -73,7 +110,7 @@ if __name__ == "__main__":
             continue
 
         detections = detector.detect(image)
-        image = detector.visualize(image, detections)
+        image = detector.visualize_mask(image, detections, emoji_path="assets/smile.png", scale=1.5)
 
         # Display the annotated frame.
         cv2.imshow('MediaPipe Object Detection', image)
