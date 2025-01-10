@@ -49,7 +49,8 @@ class PoseDetector:
         options = vision.PoseLandmarkerOptions(base_options=base_options, output_segmentation_masks=True)
         self.detector = vision.PoseLandmarker.create_from_options(options)
 
-    def visualize(self, image, detections: list):
+    @staticmethod
+    def visualize(image, detections: list):
         pose_landmarks_list = detections.pose_landmarks
         annotated_image = np.copy(image)
 
@@ -143,8 +144,7 @@ if __name__ == "__main__":
             continue
 
         detections = detector.detect(image)
-        # image = detector.visualize(image, detections)
-        image = detector.visualize_mask(image, detections, emoji_path="assets/smile.png", scale=4.0)
+        image = detector.visualize(image, detections)
 
         # Display the annotated frame.
         cv2.imshow('MediaPipe Object Detection', image)

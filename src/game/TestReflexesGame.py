@@ -20,7 +20,8 @@ class TestReflexesGame:
             Challenge("Hand above head", PoseChallenges().is_hand_above_head_in_frame, Challenge.POSE, "assets/images/examples/pose/hand_above_head.jpg"),
             Challenge("T pose", PoseChallenges().is_t_pose_in_frame, Challenge.POSE, "assets/images/examples/pose/T.png"),
             Challenge("Turn head", PoseChallenges().is_turn_head_in_frame, Challenge.POSE, "assets/images/examples/pose/turn_head.jpg"),
-            # Challenge("Tilt head", PoseChallenges().is_tilt_head_in_frame, Challenge.POSE, "assets/images/examples/pose/tilt_head.jpg"),
+            Challenge("Left hand on right shoulder", PoseChallenges().is_left_hand_in_right_shoulder, Challenge.POSE, "assets/images/examples/pose/tilt_head.jpg"), # TODO Fix image
+            Challenge("Right hand on left shoulder", PoseChallenges().is_right_hand_in_left_shoulder, Challenge.POSE, "assets/images/examples/pose/tilt_head.jpg"), # TODO Fix image
         ]
 
     def __object_challenges(allowed_objects = ["phone", "bottle", "cup", "backpack", "remote"]):
