@@ -10,6 +10,7 @@ from src.challenges.PoseChallenges import PoseChallenges
 from src.game.drawables.IndicationDrawable  import IndicationDrawable
 from src.game.drawables.TrafficLightDrawable import TrafficLightDrawable
 from src.detectors.FaceDetector import FaceDetector
+from src.game.ScreenRecorder import ScreenRecorder
 
 class TestReflexesGame:
     LEADERS_LIST = []
@@ -78,6 +79,7 @@ class TestReflexesGame:
         self.traffic_light_drawable = TrafficLightDrawable()
         self.current_screen = TestReflexesGame.SCREEN_LEADERS
         self.face_detector = FaceDetector()
+        self.screen_recorder = ScreenRecorder()
         self.last_score = None
 
         self.challenges_allowed = []
@@ -86,6 +88,7 @@ class TestReflexesGame:
         self.challenges_allowed = self.challenges_allowed + TestReflexesGame.__object_challenges(allowed_objects=["phone"])
 
     def capture_video(self):
+        fps = self.cap.get(cv2.CAP_PROP_FPS)
         while self.running:
             success, frame = self.cap.read()
             if not success:
@@ -101,9 +104,9 @@ class TestReflexesGame:
 
             if self.current_screen == TestReflexesGame.SCREEN_LEADERS:
                 self.drawable_frame = self.leaders_board.draw(self.drawable_frame)
-                # cv2.putText(self.drawable_frame, "Press R to start recording", (int(frame_width/2)-90, frame_height - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                cv2.putText(self.drawable_frame, f"Recording: {self.screen_recorder.is_recording()}", (int(frame_width/2)-90, frame_height - 70), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
                 cv2.putText(self.drawable_frame, "Press SPACE to start the game", (int(frame_width/2)-90, frame_height - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-                # cv2.putText(self.drawable_frame, "Press recording state", (int(frame_width/2)-90, frame_height - 70), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                cv2.putText(self.drawable_frame, "Press R to start recording", (int(frame_width/2)-90, frame_height - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
             if self.current_screen == TestReflexesGame.SCREEN_CHALLENGES:
                 self.drawable_frame = self.traffic_light_drawable.draw(self.drawable_frame, margin=(10, 100))
@@ -123,12 +126,15 @@ class TestReflexesGame:
             # Aqui você pode adicionar a lógica para mostrar o frame ou processá-lo
             cv2.imshow('Video Feed', self.drawable_frame)
 
+            self.screen_recorder.record_frame(self.drawable_frame)
+
             # Espera por uma tecla para fechar a janela
             key = cv2.waitKey(1)
             if key & 0xFF == ord('q'):
                 self.running = False
-            # elif key & 0xFF == ord('r'): # TODO: Start Recording
-            #     raise NotImplementedError
+            elif key & 0xFF == ord('r'):
+                if (self.screen_recorder.is_recording()): self.screen_recorder.stop_recording()
+                else: self.screen_recorder.start_recording(self.drawable_frame)
             elif key & 0xFF == 32 and self.current_screen == TestReflexesGame.SCREEN_LEADERS:
                 self.current_screen = TestReflexesGame.SCREEN_CHALLENGES
     
@@ -216,6 +222,7 @@ class TestReflexesGame:
                 time.sleep(15)
 
         finally:
+            self.screen_recorder.stop_recording()
             self.running = False  # Para a captura de vídeo
             video_thread.join()  # Espera a thread de vídeo terminar
             self.cap.release()  # Libera a captura de vídeo

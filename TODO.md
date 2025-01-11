@@ -4,4 +4,4 @@
 - [x] Mascara no final do jogo
 - [x] Leaderboard visual no inicio do jogo
 - [x] prevenção de challenges feitos em menos de 0.5 segundos
-- [ ] Tecla para gravar o video
+- [x] Tecla para gravar o video

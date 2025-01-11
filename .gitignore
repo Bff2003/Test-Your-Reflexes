@@ -2,3 +2,4 @@ venv/
 __pycache__/
 *copy*
 assets/leaders.json
+assets/videos/sessions/
