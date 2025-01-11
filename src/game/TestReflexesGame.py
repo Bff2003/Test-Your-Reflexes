@@ -38,8 +38,9 @@ class TestReflexesGame:
     def __object_challenges(allowed_objects = ["phone", "bottle", "cup", "backpack", "remote"]):
         to_return = []
         if "phone" in allowed_objects: to_return.append(Challenge("Phone in screen", ObjectsChallenges().is_phone_in_frame, Challenge.OBJECT, "assets/images/examples/objects/phone.png"))
-        if "bottle" in allowed_objects: to_return.append(Challenge("Cup in screen", ObjectsChallenges().is_cup_in_frame, Challenge.OBJECT, "assets/images/examples/objects/cup.png"))
-        if "cup" in allowed_objects: to_return.append(Challenge("Backpack in screen", ObjectsChallenges().is_backpack_in_frame, Challenge.OBJECT, "assets/images/examples/objects/backpack.png"))
+        if "cup" in allowed_objects: to_return.append(Challenge("Cup in screen", ObjectsChallenges().is_cup_in_frame, Challenge.OBJECT, "assets/images/examples/objects/cup.png"))
+        if "backpack" in allowed_objects: to_return.append(Challenge("Backpack in screen", ObjectsChallenges().is_backpack_in_frame, Challenge.OBJECT, "assets/images/examples/objects/backpack.png"))
+        if "bottle" in allowed_objects: to_return.append(Challenge("Bottle in screen", ObjectsChallenges().is_bottle_in_frame, Challenge.OBJECT, "assets/images/examples/objects/bottle.png"))
         if "remote" in allowed_objects: to_return.append(Challenge("Remote in screen", ObjectsChallenges().is_remote_in_frame, Challenge.OBJECT, "assets/images/examples/objects/remote.png"))
         return to_return
 
