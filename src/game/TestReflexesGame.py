@@ -31,16 +31,16 @@ class TestReflexesGame:
             Challenge("Hand above head", PoseChallenges().is_hand_above_head_in_frame, Challenge.POSE, "assets/images/examples/pose/hand_above_head.jpg"),
             Challenge("T pose", PoseChallenges().is_t_pose_in_frame, Challenge.POSE, "assets/images/examples/pose/T.png"),
             Challenge("Turn head", PoseChallenges().is_turn_head_in_frame, Challenge.POSE, "assets/images/examples/pose/turn_head.jpg"),
-            Challenge("Left hand on right shoulder", PoseChallenges().is_left_hand_in_right_shoulder, Challenge.POSE, "assets/images/examples/pose/tilt_head.jpg"), # TODO Fix image
-            Challenge("Right hand on left shoulder", PoseChallenges().is_right_hand_in_left_shoulder, Challenge.POSE, "assets/images/examples/pose/tilt_head.jpg"), # TODO Fix image
+            Challenge("Left hand on right shoulder", PoseChallenges().is_left_hand_in_right_shoulder, Challenge.POSE, "assets/images/examples/pose/left_hand_in_right_shoulder.png"),
+            Challenge("Right hand on left shoulder", PoseChallenges().is_right_hand_in_left_shoulder, Challenge.POSE, "assets/images/examples/pose/right_hand_in_left_shoulder.png"),
         ]
 
     def __object_challenges(allowed_objects = ["phone", "bottle", "cup", "backpack", "remote"]):
         to_return = []
         if "phone" in allowed_objects: to_return.append(Challenge("Phone in screen", ObjectsChallenges().is_phone_in_frame, Challenge.OBJECT, "assets/images/examples/objects/phone.png"))
-        if "bottle" in allowed_objects: to_return.append(Challenge("Cup in screen", ObjectsChallenges().is_cup_in_frame, Challenge.OBJECT))
-        if "cup" in allowed_objects: to_return.append(Challenge("Backpack in screen", ObjectsChallenges().is_backpack_in_frame, Challenge.OBJECT))
-        if "remote" in allowed_objects: to_return.append(Challenge("Remote in screen", ObjectsChallenges().is_remote_in_frame, Challenge.OBJECT))
+        if "bottle" in allowed_objects: to_return.append(Challenge("Cup in screen", ObjectsChallenges().is_cup_in_frame, Challenge.OBJECT, "assets/images/examples/objects/cup.png"))
+        if "cup" in allowed_objects: to_return.append(Challenge("Backpack in screen", ObjectsChallenges().is_backpack_in_frame, Challenge.OBJECT, "assets/images/examples/objects/backpack.png"))
+        if "remote" in allowed_objects: to_return.append(Challenge("Remote in screen", ObjectsChallenges().is_remote_in_frame, Challenge.OBJECT, "assets/images/examples/objects/remote.png"))
         return to_return
 
     def __hands_challenges():
