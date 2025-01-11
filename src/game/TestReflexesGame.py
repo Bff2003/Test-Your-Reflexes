@@ -11,6 +11,7 @@ from src.game.drawables.IndicationDrawable  import IndicationDrawable
 from src.game.drawables.TrafficLightDrawable import TrafficLightDrawable
 from src.detectors.FaceDetector import FaceDetector
 from src.game.ScreenRecorder import ScreenRecorder
+import pygame
 
 class TestReflexesGame:
     LEADERS_LIST = []
@@ -18,6 +19,9 @@ class TestReflexesGame:
     SCREEN_LEADERS = 0
     SCREEN_CHALLENGES = 1
     SCREEN_MASK = 2
+
+    SUCESS_SOUND = "assets/sounds/success.mp3"
+    VICTORY_SOUND = "assets/sounds/victory.mp3"
 
     def __pose_challenges():
         return [
@@ -154,6 +158,7 @@ class TestReflexesGame:
 
     def start_game(self):
         try:
+            pygame.init()
             # Inicia a thread para capturar vídeo
             video_thread = Thread(target=self.capture_video)
             video_thread.start()
@@ -194,6 +199,7 @@ class TestReflexesGame:
                         if time.time() - start_time > 0.55:
                             self.actual_challenge = None
                             print("Movement valid!")
+                            pygame.mixer.Sound(TestReflexesGame.SUCESS_SOUND).play()
                             break
 
                     end_time = time.time()
@@ -219,7 +225,8 @@ class TestReflexesGame:
                 self.current_screen = TestReflexesGame.SCREEN_MASK
 
             if self.current_screen == TestReflexesGame.SCREEN_MASK:
-                time.sleep(15)
+                pygame.mixer.Sound(TestReflexesGame.VICTORY_SOUND).play()
+                time.sleep(10)
 
         finally:
             self.screen_recorder.stop_recording()
