@@ -12,6 +12,7 @@ from src.game.drawables.TrafficLightDrawable import TrafficLightDrawable
 from src.detectors.FaceDetector import FaceDetector
 from src.game.ScreenRecorder import ScreenRecorder
 import pygame
+import os
 
 class TestReflexesGame:
     LEADERS_LIST = []
@@ -73,8 +74,11 @@ class TestReflexesGame:
             
             i=i+1
 
-    def __init__(self, name):
+    def __init__(self, name = None, user_image = None):  
         self.name = name if name else input("Enter your name: ")
+        self.user_image = user_image if user_image else input("Enter your image path: ")
+        if not os.path.exists(self.user_image):
+            self.user_image = None
         self.cap = cv2.VideoCapture(0)  # Inicializa a captura de vídeo
         self.running = True
         self.last_frame = None
@@ -208,7 +212,7 @@ class TestReflexesGame:
                     print(f"Mini game {i + 1} finished!")
                 
                 print("Game finished!")
-                self.leaders_board.add_leader(self.name, sum([end_time - start_time for start_time, end_time in movements_times]))
+                self.leaders_board.add_leader(self.name, sum([end_time - start_time for start_time, end_time in movements_times]), self.user_image)
                 print("Time for each movement:")
                 for i in range(len(movements_times)):
                     print(f"Movement {i + 1}: {movements_times[i][1] - movements_times[i][0]} seconds")
@@ -226,7 +230,7 @@ class TestReflexesGame:
 
             if self.current_screen == TestReflexesGame.SCREEN_MASK:
                 pygame.mixer.Sound(TestReflexesGame.VICTORY_SOUND).play()
-                time.sleep(10)
+                time.sleep(7)
 
         finally:
             self.screen_recorder.stop_recording()

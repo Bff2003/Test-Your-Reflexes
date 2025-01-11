@@ -97,7 +97,7 @@ class LeadersBoard:
             rect_y = int((frame_height - square_height) / 2)
 
             # Verificar se há imagem para o líder
-            if leader[2] is not None:
+            if leader[2] is not None and os.path.exists(leader[2]):
                 image_path = leader[2]
                 image = cv2.imread(image_path)
 
