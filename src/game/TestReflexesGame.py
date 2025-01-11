@@ -204,8 +204,8 @@ class TestReflexesGame:
                 print(f"Average time: {sum([end_time - start_time for start_time, end_time in movements_times]) / len(movements_times)} seconds")
 
                 self.last_score = {
-                    "total": sum([end_time - start_time for start_time, end_time in movements_times]),
-                    "average": sum([end_time - start_time for start_time, end_time in movements_times]) / len(movements_times),
+                    "total": round(sum([end_time - start_time for start_time, end_time in movements_times]), 2),
+                    "average": round(sum([end_time - start_time for start_time, end_time in movements_times]) / len(movements_times), 2),
                     "movements": movements_times
                 }
 
