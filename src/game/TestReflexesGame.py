@@ -9,9 +9,14 @@ from src.challenges.ObjectsChallenges import ObjectsChallenges
 from src.challenges.PoseChallenges import PoseChallenges
 from src.game.drawables.IndicationDrawable  import IndicationDrawable
 from src.game.drawables.TrafficLightDrawable import TrafficLightDrawable
+from src.detectors.FaceDetector import FaceDetector
 
 class TestReflexesGame:
     LEADERS_LIST = []
+
+    SCREEN_LEADERS = 0
+    SCREEN_CHALLENGES = 1
+    SCREEN_MASK = 2
 
     def __pose_challenges():
         return [
@@ -71,6 +76,9 @@ class TestReflexesGame:
         self.leaders_board = LeadersBoard()
         self.actual_challenge = None
         self.traffic_light_drawable = TrafficLightDrawable()
+        self.current_screen = TestReflexesGame.SCREEN_LEADERS
+        self.face_detector = FaceDetector()
+        self.last_score = None
 
         self.challenges_allowed = []
         self.challenges_allowed = self.challenges_allowed + TestReflexesGame.__hands_challenges()
@@ -84,26 +92,45 @@ class TestReflexesGame:
                 print("Ignoring empty camera frame.")
                 continue
             
+            frame_height, frame_width, _ = frame.shape
+
             # Armazena o último frame capturado
             self.last_frame = frame.copy()
 
             self.drawable_frame = cv2.flip(self.last_frame, 1)
 
-            self.drawable_frame = self.traffic_light_drawable.draw(self.drawable_frame, margin=(10, 100))
-            try:
-                if self.actual_challenge is not None:
-                    if self.actual_challenge.image is not None and self.actual_challenge is not None:
-                        id = IndicationDrawable(100, 20)
-                        self.drawable_frame = id.draw(self.drawable_frame, cv2.imread(self.actual_challenge.image), ["Type:" + str(self.actual_challenge.challenge_type),"Do the challenge:", self.actual_challenge.name], (120, 120))
-            except AttributeError:
-                pass
-            
+            if self.current_screen == TestReflexesGame.SCREEN_LEADERS:
+                self.drawable_frame = self.leaders_board.draw(self.drawable_frame)
+                # cv2.putText(self.drawable_frame, "Press R to start recording", (int(frame_width/2)-90, frame_height - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                cv2.putText(self.drawable_frame, "Press SPACE to start the game", (int(frame_width/2)-90, frame_height - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                # cv2.putText(self.drawable_frame, "Press recording state", (int(frame_width/2)-90, frame_height - 70), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+
+            if self.current_screen == TestReflexesGame.SCREEN_CHALLENGES:
+                self.drawable_frame = self.traffic_light_drawable.draw(self.drawable_frame, margin=(10, 100))
+                try:
+                    if self.actual_challenge is not None:
+                        if self.actual_challenge.image is not None and self.actual_challenge is not None:
+                            id = IndicationDrawable(100, 20)
+                            self.drawable_frame = id.draw(self.drawable_frame, cv2.imread(self.actual_challenge.image), ["Type:" + str(self.actual_challenge.challenge_type),"Do the challenge:", self.actual_challenge.name], (120, 120))
+                except AttributeError:
+                    pass
+
+            if self.current_screen == TestReflexesGame.SCREEN_MASK and self.last_score is not None:
+                self.drawable_frame = self.leaders_board.draw_scores(self.drawable_frame, self.last_score["total"], self.last_score["average"])
+                detections = self.face_detector.detect(self.drawable_frame)
+                self.face_detector.visualize_mask(self.drawable_frame, detections, scale=1.5, emoji_path="assets/smile.png")
+
             # Aqui você pode adicionar a lógica para mostrar o frame ou processá-lo
             cv2.imshow('Video Feed', self.drawable_frame)
 
             # Espera por uma tecla para fechar a janela
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            key = cv2.waitKey(1)
+            if key & 0xFF == ord('q'):
                 self.running = False
+            # elif key & 0xFF == ord('r'): # TODO: Start Recording
+            #     raise NotImplementedError
+            elif key & 0xFF == 32 and self.current_screen == TestReflexesGame.SCREEN_LEADERS:
+                self.current_screen = TestReflexesGame.SCREEN_CHALLENGES
     
     def traffic_light(self):
         for i in range(3, 0, -1):
@@ -125,45 +152,68 @@ class TestReflexesGame:
             video_thread = Thread(target=self.capture_video)
             video_thread.start()
 
-            movements_times = []
-            last_movement = -1
-            for i in range(5):  # Exemplo de 5 movimentos
-                while True:
-                    movement_choosed = random.randint(0, len(self.challenges_allowed) - 1)
-                    if (movement_choosed != last_movement):
-                        break
-                
-                # input("Press enter to simulate the movement")
-                self.traffic_light()
-                print(f"Movement chosen: {self.challenges_allowed[movement_choosed].name}")
-                start_time = time.time()
-                while True:
-                    # Passa o frame atual para is_valid()
-                    if self.last_frame is None:
-                        continue
+            self.current_screen = TestReflexesGame.SCREEN_LEADERS
 
-                    self.actual_challenge = self.challenges_allowed[movement_choosed]
-                    
-                    if not self.challenges_allowed[movement_choosed].is_valid(self.last_frame):  # Se o movimento não for válido
-                        # print("Movement not valid!")
-                        continue
-                    
-                    self.actual_challenge = None
-                    print("Movement valid!")
+            if self.current_screen == TestReflexesGame.SCREEN_LEADERS:
+                print("Press to SPACE to start the game")
+
+            while True:
+                if self.current_screen == TestReflexesGame.SCREEN_CHALLENGES:
                     break
 
-                end_time = time.time()
-                movements_times.append([start_time, end_time])
+            if self.current_screen == TestReflexesGame.SCREEN_CHALLENGES:
+                movements_times = []
+                last_movement = -1
+                for i in range(5):  # Exemplo de 5 movimentos
+                    while True:
+                        movement_choosed = random.randint(0, len(self.challenges_allowed) - 1)
+                        if (movement_choosed != last_movement):
+                            break
+                    
+                    # input("Press enter to simulate the movement")
+                    self.traffic_light()
+                    print(f"Movement chosen: {self.challenges_allowed[movement_choosed].name}")
+                    start_time = time.time()
+                    while True:
+                        # Passa o frame atual para is_valid()
+                        if self.last_frame is None:
+                            continue
 
-                print(f"Mini game {i + 1} finished!")
-            
-            print("Game finished!")
-            self.leaders_board.add_leader(self.name, sum([end_time - start_time for start_time, end_time in movements_times]))
-            print("Time for each movement:")
-            for i in range(len(movements_times)):
-                print(f"Movement {i + 1}: {movements_times[i][1] - movements_times[i][0]} seconds")
-            print(f"Total time: {sum([end_time - start_time for start_time, end_time in movements_times])} seconds")
-            print(f"Average time: {sum([end_time - start_time for start_time, end_time in movements_times]) / len(movements_times)} seconds")
+                        self.actual_challenge = self.challenges_allowed[movement_choosed]
+                        
+                        if not self.challenges_allowed[movement_choosed].is_valid(self.last_frame):  # Se o movimento não for válido
+                            # print("Movement not valid!")
+                            continue
+
+                        if time.time() - start_time > 0.55:
+                            self.actual_challenge = None
+                            print("Movement valid!")
+                            break
+
+                    end_time = time.time()
+                    movements_times.append([start_time, end_time])
+
+                    print(f"Mini game {i + 1} finished!")
+                
+                print("Game finished!")
+                self.leaders_board.add_leader(self.name, sum([end_time - start_time for start_time, end_time in movements_times]))
+                print("Time for each movement:")
+                for i in range(len(movements_times)):
+                    print(f"Movement {i + 1}: {movements_times[i][1] - movements_times[i][0]} seconds")
+                print(f"Total time: {sum([end_time - start_time for start_time, end_time in movements_times])} seconds")
+                print(f"Average time: {sum([end_time - start_time for start_time, end_time in movements_times]) / len(movements_times)} seconds")
+
+                self.last_score = {
+                    "total": sum([end_time - start_time for start_time, end_time in movements_times]),
+                    "average": sum([end_time - start_time for start_time, end_time in movements_times]) / len(movements_times),
+                    "movements": movements_times
+                }
+
+                time.sleep(0.5)
+                self.current_screen = TestReflexesGame.SCREEN_MASK
+
+            if self.current_screen == TestReflexesGame.SCREEN_MASK:
+                time.sleep(15)
 
         finally:
             self.running = False  # Para a captura de vídeo

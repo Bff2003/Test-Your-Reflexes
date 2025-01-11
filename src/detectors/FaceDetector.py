@@ -92,8 +92,8 @@ class FaceDetector:
         # Detect objects in the frame.
         detections = self.detector.detect(image)
 
-        for detection in detections.detections:
-            print(f"{detection.categories[0].category_name}: {detection.categories[0].score}")
+        # for detection in detections.detections:
+        #     print(f"{detection.categories[0].category_name}: {detection.categories[0].score}")
         return detections.detections
 
 if __name__ == "__main__":
