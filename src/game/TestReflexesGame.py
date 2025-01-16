@@ -10,6 +10,7 @@ from src.challenges.PoseChallenges import PoseChallenges
 from src.game.drawables.IndicationDrawable  import IndicationDrawable
 from src.game.drawables.TrafficLightDrawable import TrafficLightDrawable
 from src.detectors.FaceDetector import FaceDetector
+from src.detectors.PoseDetector import PoseDetector
 from src.game.ScreenRecorder import ScreenRecorder
 import pygame
 import os
@@ -88,6 +89,7 @@ class TestReflexesGame:
         self.traffic_light_drawable = TrafficLightDrawable()
         self.current_screen = TestReflexesGame.SCREEN_LEADERS
         self.face_detector = FaceDetector()
+        self.pose_detector = PoseDetector()
         self.screen_recorder = ScreenRecorder()
         self.last_score = None
 
@@ -129,8 +131,8 @@ class TestReflexesGame:
 
             if self.current_screen == TestReflexesGame.SCREEN_MASK and self.last_score is not None:
                 self.drawable_frame = self.leaders_board.draw_scores(self.drawable_frame, self.last_score["total"], self.last_score["average"])
-                detections = self.face_detector.detect(self.drawable_frame)
-                self.face_detector.visualize_mask(self.drawable_frame, detections, scale=1.5, emoji_path="assets/smile.png")
+                detections = self.pose_detector.detect(self.drawable_frame)
+                self.drawable_frame = self.pose_detector.visualize_mask(self.drawable_frame, detections, 'assets/smile.png')
 
             # Aqui você pode adicionar a lógica para mostrar o frame ou processá-lo
             cv2.imshow('Video Feed', self.drawable_frame)
