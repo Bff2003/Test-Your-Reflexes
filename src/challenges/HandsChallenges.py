@@ -134,24 +134,26 @@ class HandsChallenges:
     def is_fixe_gesture_in_frame(self, frame):
         detections = self.hands_detector.detect(frame)
         hand_landmarks = detections.hand_landmarks
+        tolerance = 0.07
+
         for i in range(len(hand_landmarks)):
             hand = hand_landmarks[i]
             if detections.handedness[i][0].category_name == "Right":
-                thumb_up = hand[self.hands_detector.THUMB_TIP_INDEX].y < hand[self.hands_detector.THUMB_MCP_INDEX].y
-                index_finger_down = hand[8].x < hand[6].x
-                middle_finger_down = hand[12].x < hand[10].x
-                ring_finger_down = hand[16].x < hand[14].x
-                pinky_finger_down = hand[20].x < hand[18].x
+                thumb_up = hand[self.hands_detector.THUMB_TIP_INDEX].y < hand[self.hands_detector.THUMB_MCP_INDEX].y - tolerance
+                index_finger_down = hand[8].x < hand[6].x + tolerance
+                middle_finger_down = hand[12].x < hand[10].x + tolerance
+                ring_finger_down = hand[16].x < hand[14].x + tolerance
+                pinky_finger_down = hand[20].x < hand[18].x + tolerance
             
                 if thumb_up and index_finger_down and middle_finger_down and ring_finger_down and pinky_finger_down:
                     return True
 
             elif detections.handedness[i][0].category_name == "Left":
-                thumb_up = hand[self.hands_detector.THUMB_TIP_INDEX].y < hand[self.hands_detector.THUMB_MCP_INDEX].y
-                index_finger_down = hand[8].x > hand[6].x
-                middle_finger_down = hand[12].x > hand[10].x
-                ring_finger_down = hand[16].x > hand[14].x
-                pinky_finger_down = hand[20].x > hand[18].x
+                thumb_up = hand[self.hands_detector.THUMB_TIP_INDEX].y < hand[self.hands_detector.THUMB_MCP_INDEX].y - tolerance
+                index_finger_down = hand[8].x > hand[6].x - tolerance
+                middle_finger_down = hand[12].x > hand[10].x - tolerance
+                ring_finger_down = hand[16].x > hand[14].x - tolerance
+                pinky_finger_down = hand[20].x > hand[18].x - tolerance
             
                 if thumb_up and index_finger_down and middle_finger_down and ring_finger_down and pinky_finger_down:
                     return True
@@ -171,7 +173,7 @@ if __name__ == "__main__":
             print("Ignoring empty camera frame.")
             continue
 
-        print(hands_challenges.is_callme_gesture_in_frame(frame))
+        print(hands_challenges.is_fixe_gesture_in_frame(frame))
 
         detections = hands_detector.detect(frame)
         image = hands_detector.visualize(frame, detections)
