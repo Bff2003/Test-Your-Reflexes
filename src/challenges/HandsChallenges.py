@@ -144,8 +144,11 @@ class HandsChallenges:
                 middle_finger_down = hand[12].x < hand[10].x + tolerance
                 ring_finger_down = hand[16].x < hand[14].x + tolerance
                 pinky_finger_down = hand[20].x < hand[18].x + tolerance
+
+                thumb_distance = abs(hand[self.hands_detector.THUMB_TIP_INDEX].y - hand[self.hands_detector.THUMB_MCP_INDEX].y)
+                thumb_distance = thumb_distance > 0.16
             
-                if thumb_up and index_finger_down and middle_finger_down and ring_finger_down and pinky_finger_down:
+                if thumb_up and index_finger_down and middle_finger_down and ring_finger_down and pinky_finger_down and thumb_distance:
                     return True
 
             elif detections.handedness[i][0].category_name == "Left":
@@ -154,8 +157,11 @@ class HandsChallenges:
                 middle_finger_down = hand[12].x > hand[10].x - tolerance
                 ring_finger_down = hand[16].x > hand[14].x - tolerance
                 pinky_finger_down = hand[20].x > hand[18].x - tolerance
+
+                thumb_distance = abs(hand[self.hands_detector.THUMB_TIP_INDEX].y - hand[self.hands_detector.THUMB_MCP_INDEX].y)
+                thumb_distance = thumb_distance > 0.16
             
-                if thumb_up and index_finger_down and middle_finger_down and ring_finger_down and pinky_finger_down:
+                if thumb_up and index_finger_down and middle_finger_down and ring_finger_down and pinky_finger_down and thumb_distance:
                     return True
 
         return False
