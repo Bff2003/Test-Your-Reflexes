@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from icecream import ic
 
 
 class Drawable:
