@@ -4,6 +4,8 @@ class Challenge:
     HANDS = 2
     FACE = 3
 
+    LIST_CHALLENGES_TYPES_STR = ["OBJECT", "POSE", "HANDS", "FACE"]
+
     def __init__(self, name: str, challenge: callable, challenge_type: str, image: str = None):
         self.name = name
         self.challenge = challenge

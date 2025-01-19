@@ -125,7 +125,7 @@ class TestReflexesGame:
                     if self.actual_challenge is not None:
                         if self.actual_challenge.image is not None and self.actual_challenge is not None:
                             id = IndicationDrawable(100, 20)
-                            self.drawable_frame = id.draw(self.drawable_frame, cv2.imread(self.actual_challenge.image), ["Type:" + str(self.actual_challenge.challenge_type),"Do the challenge:", self.actual_challenge.name], (120, 120))
+                            self.drawable_frame = id.draw(self.drawable_frame, cv2.imread(self.actual_challenge.image), ["Type: " + Challenge.LIST_CHALLENGES_TYPES_STR[self.actual_challenge.challenge_type].capitalize(),"Do the challenge:", self.actual_challenge.name], (120, 120))
                 except AttributeError:
                     pass
 
