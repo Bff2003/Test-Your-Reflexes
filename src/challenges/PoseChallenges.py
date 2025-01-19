@@ -3,7 +3,7 @@ import cv2
 import math
 from icecream import ic
 
-class PoseChallenges: # TODO Implement this class
+class PoseChallenges:
     LIST_CHALLENGES = []
     MIN_SCORE = 0.5
 

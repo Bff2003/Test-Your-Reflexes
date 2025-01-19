@@ -34,15 +34,12 @@ class HandsChallenges:
         return False
 
     def is_closed_hand_gesture_in_frame(self, frame):
-        # Detecta os landmarks das mãos no frame
         hand_landmarks = self.hands_detector.detect(frame).hand_landmarks
         
         if hand_landmarks is None or len(hand_landmarks) == 0:
-            return False  # Retorna False se não houver landmarks detectados
+            return False
 
-        # Obter as coordenadas dos dedos
         for hand in hand_landmarks:
-            # Obter as coordenadas dos dedos
             thumb_tip = hand[self.hands_detector.THUMB_TIP_INDEX]
             thumb_base = hand[self.hands_detector.THUMB_MCP_INDEX]
             
@@ -51,16 +48,13 @@ class HandsChallenges:
             ring_finger_tip = hand[self.hands_detector.RING_FINGER_TIP_INDEX]
             pinky_tip = hand[self.hands_detector.PINKY_TIP_INDEX]
 
-            # Verifica se o polegar está fechado (a ponta do polegar deve estar abaixo da base)
             thumb_closed = thumb_tip.y > thumb_base.y
 
-            # Verifica se os dedos indicador, médio, anelar e mínimo estão fechados
             index_finger_closed = index_finger_tip.y > hand[self.hands_detector.INDEX_FINGER_MCP_INDEX].y
             middle_finger_closed = middle_finger_tip.y > hand[self.hands_detector.MIDDLE_FINGER_MCP_INDEX].y
             ring_finger_closed = ring_finger_tip.y > hand[self.hands_detector.RING_FINGER_MCP_INDEX].y
             pinky_closed = pinky_tip.y > hand[self.hands_detector.PINKY_MCP_INDEX].y
 
-            # Retorna True se todos os dedos, exceto o polegar, estiverem fechados
             if (thumb_closed and 
                 index_finger_closed and 
                 middle_finger_closed and 

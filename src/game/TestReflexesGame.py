@@ -108,7 +108,6 @@ class TestReflexesGame:
             
             frame_height, frame_width, _ = frame.shape
 
-            # Armazena o último frame capturado
             self.last_frame = frame.copy()
 
             self.drawable_frame = cv2.flip(self.last_frame, 1)
@@ -134,12 +133,10 @@ class TestReflexesGame:
                 detections = self.pose_detector.detect(self.drawable_frame)
                 self.drawable_frame = self.pose_detector.visualize_mask(self.drawable_frame, detections, 'assets/smile.png')
 
-            # Aqui você pode adicionar a lógica para mostrar o frame ou processá-lo
             cv2.imshow('Video Feed', self.drawable_frame)
 
             self.screen_recorder.record_frame(self.drawable_frame)
 
-            # Espera por uma tecla para fechar a janela
             key = cv2.waitKey(1)
             if key & 0xFF == ord('q'):
                 self.running = False

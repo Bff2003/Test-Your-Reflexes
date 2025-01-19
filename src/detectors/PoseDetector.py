@@ -128,13 +128,11 @@ class PoseDetector:
 
     def detect(self, frame) -> list:
         """ Detect objects in the frame and return a list of detections. """
-        # Convert the image to RGB.
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # Process the frame.
         image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image)
 
-        # Detect objects in the frame.
         detections = self.detector.detect(image)
 
         # for detection in detections.pose_landmarks:
