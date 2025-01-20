@@ -1,5 +1,6 @@
 import cv2
 from src.game.drawables.Drawable import Drawable
+import src.Utils as Utils
 
 class TrafficLightDrawable(Drawable):
 
@@ -22,9 +23,10 @@ class TrafficLightDrawable(Drawable):
         super().__init__()
         self.current_state = TrafficLightDrawable.STATE.DISABLED
  
-    def draw(self, frame, image_size=(300, 250), margin = (10, 50)):
+    def draw(self, frame, image_size=(120, 325), margin=(20, 110)): # image_size=(width, height), margin=(X, Y)
         image = cv2.imread(self.STATES[self.current_state][1], cv2.IMREAD_UNCHANGED)
-        return Drawable._draw_png(frame, image, image_size, (frame.shape[1] - image_size[1] - margin[0], margin[1]))
+        location_x = frame.shape[1] - image_size[0] - margin[0]
+        return Utils.overlay_image(frame, image, size=image_size, location=(location_x, margin[1]))
 
     def set_state(self, state: int):
         self.current_state = state

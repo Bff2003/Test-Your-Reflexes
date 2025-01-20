@@ -1,4 +1,5 @@
 import cv2
+import src.Utils as Utils
 
 class IndicationDrawable:
     def __init__(self, start_x, start_y):
@@ -6,13 +7,8 @@ class IndicationDrawable:
     
     def draw(self, frame, image, text_lines = ["ExemploTexto1", "ExemploTexto2"], image_size=(120, 120), margin=10):
         resize_image = cv2.resize(image, image_size)
-        cv2.rectangle(
-            frame, 
-            self.start_location, 
-            (self.start_location[0] + resize_image.shape[1], self.start_location[1] + resize_image.shape[0]),
-            (0, 0, 255), 
-            2
-        )
+        cv2.rectangle(frame, self.start_location, (self.start_location[0] + image_size[0], self.start_location[1] + image_size[1]), (0, 0, 255), 2)
+        frame = Utils.overlay_image(frame, resize_image, self.start_location, size=image_size)
         for index, text in enumerate(text_lines):
             cv2.putText(
                 frame, 
@@ -22,7 +18,7 @@ class IndicationDrawable:
                     self.start_location[1] + 30 + (index * 30)
                 ), 
                 cv2.FONT_HERSHEY_SIMPLEX, 
-                1, 
+                0.7, 
                 (0, 0, 255), 
                 2
             )

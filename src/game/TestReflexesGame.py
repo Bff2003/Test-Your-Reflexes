@@ -12,6 +12,7 @@ from src.game.drawables.TrafficLightDrawable import TrafficLightDrawable
 from src.detectors.FaceDetector import FaceDetector
 from src.detectors.PoseDetector import PoseDetector
 from src.game.ScreenRecorder import ScreenRecorder
+from src.game.MaskApplier import MaskApplier
 import pygame
 import os
 
@@ -90,6 +91,7 @@ class TestReflexesGame:
         self.current_screen = TestReflexesGame.SCREEN_LEADERS
         self.face_detector = FaceDetector()
         self.pose_detector = PoseDetector()
+        self.mask_applier = MaskApplier("assets/smile.png")
         self.screen_recorder = ScreenRecorder()
         self.last_score = None
 
@@ -119,7 +121,7 @@ class TestReflexesGame:
                 cv2.putText(self.drawable_frame, "Press R to start recording", (int(frame_width/2)-90, frame_height - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
             if self.current_screen == TestReflexesGame.SCREEN_CHALLENGES:
-                self.drawable_frame = self.traffic_light_drawable.draw(self.drawable_frame, margin=(10, 100))
+                self.drawable_frame = self.traffic_light_drawable.draw(self.drawable_frame) #, margin=(10, 100))
                 try:
                     if self.actual_challenge is not None:
                         if self.actual_challenge.image is not None and self.actual_challenge is not None:
@@ -131,7 +133,7 @@ class TestReflexesGame:
             if self.current_screen == TestReflexesGame.SCREEN_MASK and self.last_score is not None:
                 self.drawable_frame = self.leaders_board.draw_scores(self.drawable_frame, self.last_score["total"], self.last_score["average"])
                 detections = self.pose_detector.detect(self.drawable_frame)
-                self.drawable_frame = self.pose_detector.visualize_mask(self.drawable_frame, detections, 'assets/smile.png')
+                self.drawable_frame = self.mask_applier.apply_mask(self.drawable_frame, detections)
 
             cv2.imshow('Video Feed', self.drawable_frame)
 
