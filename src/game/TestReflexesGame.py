@@ -13,8 +13,10 @@ from src.detectors.FaceDetector import FaceDetector
 from src.detectors.PoseDetector import PoseDetector
 from src.game.ScreenRecorder import ScreenRecorder
 from src.game.MaskApplier import MaskApplier
-import pygame
 import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "1"
+import pygame
+import sys
 
 class TestReflexesGame:
     LEADERS_LIST = []
@@ -55,29 +57,7 @@ class TestReflexesGame:
             Challenge("Fixe", HandsChallenges().is_fixe_gesture_in_frame, Challenge.HANDS, "assets/images/examples/hands/fixe.png")
         ]
 
-    def __ask(title, options: list, default: int, repeat_title = True, pre_ask: str = None):
-        i = 0
-        print(title)
-        while True:
-            if i != 0 and repeat_title == True:
-                print(title)
-            
-            for k in range(len(options)):
-                print(f"\t{k+1} - {options[k]}")
-            
-            ask = "Choose: "
-            if (pre_ask != None):
-                ask = pre_ask
-            
-            response = input(ask)
-
-            choosed = int(response)-1
-            if (choosed >= 0 and choosed <= len(options)-1):
-                return choosed
-            
-            i=i+1
-
-    def __init__(self, name = None, user_image = None):  
+    def __init__(self, name = None, user_image = None, allowed_objects = ["phone", "bottle", "cup", "backpack", "remote"]):  
         self.name = name if name else input("Enter your name: ")
         self.user_image = user_image if user_image else input("Enter your image path: ")
         if not os.path.exists(self.user_image):
@@ -98,7 +78,7 @@ class TestReflexesGame:
         self.challenges_allowed = []
         self.challenges_allowed = self.challenges_allowed + TestReflexesGame.__hands_challenges()
         self.challenges_allowed = self.challenges_allowed + TestReflexesGame.__pose_challenges()
-        self.challenges_allowed = self.challenges_allowed + TestReflexesGame.__object_challenges(allowed_objects=["phone"])
+        self.challenges_allowed = self.challenges_allowed + TestReflexesGame.__object_challenges(allowed_objects=allowed_objects)
 
     def capture_video(self):
         fps = self.cap.get(cv2.CAP_PROP_FPS)
@@ -244,5 +224,12 @@ class TestReflexesGame:
 
 
 if __name__ == "__main__":
-    game = TestReflexesGame(input("Enter your name: "))
+    if "--help" in sys.argv or "--h" in sys.argv:
+        print("Usage: python -m src.game.TestReflexesGame [--phone]")
+        sys.exit(0)
+
+    if "--phone" in sys.argv:
+        game = TestReflexesGame(input("Enter your name: "), allowed_objects=["phone"])
+    else:
+        game = TestReflexesGame(input("Enter your name: "))
     game.start_game()

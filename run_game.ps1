@@ -8,4 +8,4 @@ if (-not (Test-Path -Path "venv")) {
     .\venv\Scripts\Activate.ps1
 }
 
-python -m src.game.TestReflexesGame
+python -m src.game.TestReflexesGame @args
